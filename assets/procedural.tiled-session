@@ -1,0 +1,55 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "level.tmx": {
+            "scale": 0.5403125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 507.11393869288605,
+                "y": 473.79988432620013
+            }
+        },
+        "level.tmx#Brown_Tile_Terrain": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "level.tmx#Gray_Tile_Terrain": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level.tmx#Scaffolding_and_BG_Parts": {
+            "scaleInDock": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/shrek 2/Desktop/.120/procedural generation memes/assets",
+    "last.imagePath": "C:/Users/shrek 2/Desktop/.120/procedural generation memes/assets",
+    "map.height": 60,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 60,
+    "openFiles": [
+        "level.tmx"
+    ],
+    "project": "procedural.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "level.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
