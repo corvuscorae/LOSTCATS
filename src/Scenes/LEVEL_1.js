@@ -66,6 +66,7 @@ class LEVEL_1 extends Phaser.Scene {
             // The dungeon's grid size
             width: this.ROOMSIZE*5,
             height: this.ROOMSIZE*5,
+            doorPadding: 2,
             rooms: {
                 width: { min: this.ROOMSIZE, max: this.ROOMSIZE },
                 height: { min: this.ROOMSIZE, max: this.ROOMSIZE },
@@ -75,9 +76,20 @@ class LEVEL_1 extends Phaser.Scene {
             });
         for(let room of this.dungeon.rooms){
             room.discovered = false;
-        }
-        console.log(this.dungeon.rooms)
 
+            //console.log(room);
+            let doors = room.getDoorLocations();
+            for(let door of doors){
+                // door coordinates are in respect to the room, so xMin = 0, xMax = ROOMSIZE - 1
+                if(door.x == 0 || door.x == this.ROOMSIZE - 1){
+                    // vertical doors
+                    console.log(`verical @ (${door.x}, ${door.y})`);
+                } else {
+                    // horizontal doors
+                    console.log(`horizontal @ (${door.x}, ${door.y})`);
+                }
+            }
+        }
 
         // Create a blank map
         const map = this.make.tilemap({
