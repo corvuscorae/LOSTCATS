@@ -59,7 +59,7 @@ class LEVEL_1 extends Phaser.Scene {
 
     create() {
         this.init();
-        
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
         this.dungeon = new Dungeon({
@@ -73,6 +73,11 @@ class LEVEL_1 extends Phaser.Scene {
                 maxRooms: 20
             }
             });
+        for(let room of this.dungeon.rooms){
+            room.discovered = false;
+        }
+        console.log(this.dungeon.rooms)
+
 
         // Create a blank map
         const map = this.make.tilemap({
@@ -83,10 +88,11 @@ class LEVEL_1 extends Phaser.Scene {
         });
 
         // Load up a tileset, in this case, the tileset has 1px margin & 2px padding (last two arguments)
-        const tileset = map.addTilesetImage("Brown_Tile_Terrain", "brown tile");
+        this.groundTiles = map.addTilesetImage("Brown_Tile_Terrain", "brown tile");
 
         // Create an empty layer and give it the name "Layer 1"
-        const layer = map.createBlankLayer("Layer 1", tileset);
+        this.groundLayer = map.createBlankLayer("ground", this.groundTiles);
+        this.catLayer = map.createBlankLayer("cats", );
 
         // Turn the dungeon into a 2D array of tiles where each of the four types of tiles is mapped to a
         // tile index within our tileset. Note: using -1 for empty tiles means they won't render.
@@ -96,7 +102,7 @@ class LEVEL_1 extends Phaser.Scene {
             empty: emptyID, floor: floorID, door: doorID, wall: wallID });
 
         // Drop a 2D array into the map at (0, 0)
-        layer.putTilesAt(mappedTiles, 0, 0);
+        this.groundLayer.putTilesAt(mappedTiles, 0, 0);
         /////////////////////////////////////////////////////////////////////////////////////////////////
         
         //* PLAYER *//
@@ -109,8 +115,8 @@ class LEVEL_1 extends Phaser.Scene {
             .setOffset(this.guy.width / 4, this.guy.height / 2);
             
         // make walls collidable 
-        layer.setCollision(wallID);
-        this.physics.add.collider(this.guy, layer);
+        this.groundLayer.setCollision(wallID);
+        this.physics.add.collider(this.guy, this.groundLayer);
             
         //* CAMERAS *//
         let viewSize = this.ROOMSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
@@ -120,8 +126,8 @@ class LEVEL_1 extends Phaser.Scene {
     
         this.miniMapCamera = this.cameras.add(viewSize, 0, game.config.width - viewSize, game.config.width - viewSize)
             .setBounds(0, 0, map.widthInPixels, map.heightInPixels).setZoom(0.2)
-            .setBackgroundColor(0x000).startFollow(this.guy, false, 0.4, 0.4);
-            //.ignore([this.car, this.copter, this.bg])
+            .setBackgroundColor(0x000).startFollow(this.guy, false, 0.4, 0.4)
+            .ignore([this.dungeon.rooms[0]]);
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML)
@@ -135,7 +141,8 @@ class LEVEL_1 extends Phaser.Scene {
         /* MAIN CAM MOVEMENT */
         // find what room guy is in
         for(let room of this.dungeon.rooms){
-            // convert x y coords from pixels to tiles
+            room.discovered = true;
+            // convert x y coords from pixels to tilesa
             let x = this.guy.x / this.TILESIZE;
             let y = this.guy.y / this.TILESIZE;
             
