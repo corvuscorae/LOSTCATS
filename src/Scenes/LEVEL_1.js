@@ -6,7 +6,6 @@ class LEVEL_1 extends Phaser.Scene {
     preload(){ }
 
     init() {
-        this.ZOOM = 5;
         this.SPEED = 500; 
         this.TILESIZE = 32;
         this.ROOMSIZE = 25;
@@ -17,12 +16,28 @@ class LEVEL_1 extends Phaser.Scene {
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
-        this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        
+        //this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        //this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        /* CAMERA */
+        /* AUDIO */
+        this.bg_music = this.sound.add("bg_music", {
+            volume: 0,
+            rate: 1,
+            detune: 0,
+            loop: true
+        });
+        this.bg_music.targetVolume = 1;
+        if(!this.bg_music.isPlaying) this.bg_music.play();
+        this.startMusic = true;
+        this.stopMusic = false;
         
+        // DISTANCE INIT
+        this.distance.max = 
+            Math.sqrt(  Math.pow((game.config.width), 2) + 
+                        Math.pow((game.config.height), 2));
+        this.target = {x: 0, y: 0}; // TEMP
+
+        /* HTML */
         document.getElementById('description').innerHTML = 
         "<h2>idk yet</h2><br>meep moop";
     }
@@ -44,26 +59,9 @@ class LEVEL_1 extends Phaser.Scene {
 
     create() {
         this.init();
-
-        this.bg_music = this.sound.add("bg_music", {
-            volume: 0,
-            rate: 1,
-            detune: 0,
-            loop: true
-        });
-        this.bg_music.targetVolume = 0.4;
-        if(!this.bg_music.isPlaying) this.bg_music.play();
-        this.startMusic = true;
-        this.stopMusic = false;
-
-        this.distance.max = 
-            Math.sqrt(  Math.pow((game.config.width), 2) + 
-                        Math.pow((game.config.height), 2));
-
-        this.target = {x: 0, y: 0};
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
         this.dungeon = new Dungeon({
             // The dungeon's grid size
             width: this.ROOMSIZE*5,
@@ -92,7 +90,6 @@ class LEVEL_1 extends Phaser.Scene {
 
         // Turn the dungeon into a 2D array of tiles where each of the four types of tiles is mapped to a
         // tile index within our tileset. Note: using -1 for empty tiles means they won't render.
-        
         let emptyID = -1;   let floorID = 139;
         let doorID = 155;    let wallID = 35
         const mappedTiles = this.dungeon.getMappedTiles({ 
@@ -100,10 +97,9 @@ class LEVEL_1 extends Phaser.Scene {
 
         // Drop a 2D array into the map at (0, 0)
         layer.putTilesAt(mappedTiles, 0, 0);
-
-        // make walls collidable 
-        layer.setCollision(wallID);
+        /////////////////////////////////////////////////////////////////////////////////////////////////
         
+        //* PLAYER *//
         this.guy = new Player(this,
             map.widthInPixels/2, map.heightInPixels/2, 
             "platformer_characters", "tile_0006.png",
@@ -112,18 +108,20 @@ class LEVEL_1 extends Phaser.Scene {
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
             
+        // make walls collidable 
+        layer.setCollision(wallID);
+        this.physics.add.collider(this.guy, layer);
+            
+        //* CAMERAS *//
         let viewSize = this.ROOMSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
         this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels)
             .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
             .setOrigin(0).setViewport(0,0,viewSize,viewSize);
-
+    
         this.miniMapCamera = this.cameras.add(viewSize, 0, game.config.width - viewSize, game.config.width - viewSize)
             .setBounds(0, 0, map.widthInPixels, map.heightInPixels).setZoom(0.2)
             .setBackgroundColor(0x000).startFollow(this.guy, false, 0.4, 0.4);
             //.ignore([this.car, this.copter, this.bg])
-
-        this.physics.add.collider(this.guy, layer);
-        console.log(game.config.width - viewSize)
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML)
@@ -134,6 +132,7 @@ class LEVEL_1 extends Phaser.Scene {
     update() {
         this.guy.update();
 
+        /* MAIN CAM MOVEMENT */
         // find what room guy is in
         for(let room of this.dungeon.rooms){
             // convert x y coords from pixels to tiles
@@ -167,15 +166,15 @@ class LEVEL_1 extends Phaser.Scene {
             this.fade(this.bg_music, 0, 0.01);
         }
         
-        // reset scene
-        if (Phaser.Input.Keyboard.JustDown(this.enter)) {
-            this.endScene = true; this.nextScene = this;
-        }
-        // next scene
-        if (Phaser.Input.Keyboard.JustDown(this.space)) {
-            this.endScene = true; this.nextScene = "Load";
-        }
-        this.exitScene(this.endScene, this.nextScene);
+        //// reset scene
+        //if (Phaser.Input.Keyboard.JustDown(this.enter)) {
+        //    this.endScene = true; this.nextScene = this;
+        //}
+        //// next scene
+        //if (Phaser.Input.Keyboard.JustDown(this.space)) {
+        //    this.endScene = true; this.nextScene = "Load";
+        //}
+        //this.exitScene(this.endScene, this.nextScene);
     }
 
     fade(sound, target, rate){
@@ -184,14 +183,14 @@ class LEVEL_1 extends Phaser.Scene {
         else if(volume < target){ sound.volume += rate; } 
     }
 
-    exitScene(active, nextScene){
-        if(active){// fade out bg_music
-            this.stopMusic = true;
-            // restart this scene
-            if(this.bg_music.volume <= 0){ 
-                this.bg_music.stop();
-                this.scene.start(nextScene); 
-            }
-        }
-    }
+    //exitScene(active, nextScene){
+    //    if(active){// fade out bg_music
+    //        this.stopMusic = true;
+    //        // restart this scene
+    //        if(this.bg_music.volume <= 0){ 
+    //            this.bg_music.stop();
+    //            this.scene.start(nextScene); 
+    //        }
+    //    }
+    //}
 }
