@@ -67,6 +67,7 @@ class LEVEL_1 extends Phaser.Scene {
             width: this.ROOMSIZE*5,
             height: this.ROOMSIZE*5,
             doorPadding: 2,
+            doorSize: 2,
             rooms: {
                 width: { min: this.ROOMSIZE, max: this.ROOMSIZE },
                 height: { min: this.ROOMSIZE, max: this.ROOMSIZE },
@@ -74,23 +75,12 @@ class LEVEL_1 extends Phaser.Scene {
                 maxRooms: 20
             }
             });
+        
+        
         for(let room of this.dungeon.rooms){
             room.discovered = false;
-
-            //console.log(room);
-            let doors = room.getDoorLocations();
-            for(let door of doors){
-                // door coordinates are in respect to the room, so xMin = 0, xMax = ROOMSIZE - 1
-                if(door.x == 0 || door.x == this.ROOMSIZE - 1){
-                    // vertical doors
-                    console.log(`verical @ (${door.x}, ${door.y})`);
-                } else {
-                    // horizontal doors
-                    console.log(`horizontal @ (${door.x}, ${door.y})`);
-                }
-            }
         }
-
+        
         // Create a blank map
         const map = this.make.tilemap({
             tileWidth: this.TILESIZE,
@@ -99,17 +89,17 @@ class LEVEL_1 extends Phaser.Scene {
             height: this.dungeon.height
         });
 
-        // Load up a tileset, in this case, the tileset has 1px margin & 2px padding (last two arguments)
-        this.groundTiles = map.addTilesetImage("Brown_Tile_Terrain", "brown tile");
+        // load tileset
+        this.dungeonTile = map.addTilesetImage("dungeon-packed", "dungeon");
 
         // Create an empty layer and give it the name "Layer 1"
-        this.groundLayer = map.createBlankLayer("ground", this.groundTiles);
-        this.catLayer = map.createBlankLayer("cats", );
+        this.groundLayer = map.createBlankLayer("ground", this.dungeonTile);
+        this.catLayer = map.createBlankLayer("stuff", this.dungeonTile);
 
         // Turn the dungeon into a 2D array of tiles where each of the four types of tiles is mapped to a
         // tile index within our tileset. Note: using -1 for empty tiles means they won't render.
-        let emptyID = -1;   let floorID = 139;
-        let doorID = 155;    let wallID = 35
+        let emptyID = -1;   let floorID = 100;
+        let doorID = 93;    let wallID = 5
         const mappedTiles = this.dungeon.getMappedTiles({ 
             empty: emptyID, floor: floorID, door: doorID, wall: wallID });
 

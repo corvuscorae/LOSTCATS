@@ -14,9 +14,7 @@ class Load extends Phaser.Scene {
 
         // environment tiles
         this.load.setPath("./assets/enviro/");
-        this.load.image("brown tile", "Brown_Tile_Terrain.png");                 
-        this.load.image("gray tile", "Gray_Tile_Terrain.png");             
-        this.load.image("scaffolding + bg", "Scaffolding_and_BG_Parts.png");            
+        this.load.image("dungeon", "dungeon-packed.png");                 
        
         // audio
         this.load.setPath("./assets/audio/");
