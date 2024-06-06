@@ -4,13 +4,15 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
-       
-
         // player sprite 
         this.load.setPath("./assets/player/");
         this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
 
-        // Load tilemap information
+        // cats
+        this.load.setPath("./assets/cats/");
+        this.load.multiatlas("cats-sprites", "cat-sprite-sheet.json");
+
+        // environment tiles
         this.load.setPath("./assets/enviro/");
         this.load.image("brown tile", "Brown_Tile_Terrain.png");                 
         this.load.image("gray tile", "Gray_Tile_Terrain.png");             
@@ -22,6 +24,8 @@ class Load extends Phaser.Scene {
     }
 
     create() {
+        
+
          this.scene.start("LEVEL_1");
     }
 
