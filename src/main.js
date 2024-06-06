@@ -20,9 +20,9 @@ let config = {
             }
         }
     },
-    width: 800 ,
+    width: 1000 ,
     height: 800 ,
-    scene: [Load, Spatial]
+    scene: [Load, LEVEL_1]
 }
 
 var cursors;

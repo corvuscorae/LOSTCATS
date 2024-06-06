@@ -17,16 +17,16 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON("level", "level.tmj");   // Tilemap in JSON
 
         // Load the tilemap as a spritesheet
-        this.load.spritesheet("tilemap_sheet", "packed_tilemap.png", {
-            frameWidth: 16, frameHeight: 16
-        });
+        //this.load.spritesheet("tilemap_sheet", "packed_tilemap.png", {
+        //    frameWidth: 16, frameHeight: 16
+        //});
         
         // audio
         this.load.audio("bg_music", "meepmoop_mixdown.ogg");     
     }
 
     create() {
-         this.scene.start("Spatial");
+         this.scene.start("LEVEL_1");
     }
 
     // Never get here since a new scene is started in create()
