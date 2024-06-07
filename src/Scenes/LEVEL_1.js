@@ -11,14 +11,47 @@ class LEVEL_1 extends Phaser.Scene {
         this.WALLSIZE = 25;
         this.DOORSIZE = 2;
 
+        this.EMPTYTILE = -1;
+        this.TILES = {
+            BG: [100],   
+            FLOORS: {
+                normal: [69,70,71,72,85,88,104,120],
+                broken: [86,87,101,102,103,117,118,119]
+            },
+            DOORS: {
+                //left: [177,177],     // top,  bottom
+                //right: [176, 176],   // top,  bottom
+                //top: [126,127],     // left, right
+                //bottom: [160,161]   // left, right
+                left: [this.EMPTYTILE,this.EMPTYTILE],     // top,  bottom
+                right: [this.EMPTYTILE, this.EMPTYTILE],   // top,  bottom
+                top: [this.EMPTYTILE,this.EMPTYTILE],     // left, right
+                bottom: [this.EMPTYTILE,this.EMPTYTILE]   // left, right
+            }, 
+            DOORWRAP: { // aka, the walls surrounding each door
+                left: [84, 54],  // top,  bottom
+                right: [82, 53], // top,  bottom
+                top: [84,82],       // left, right
+                bottom: [54,53]     // left, right
+            },    
+            WALLS: {
+               left: [20],
+               right: [25],
+               top: [5,6,7,8],
+               bottom: [37,38,39,40],
+               corner: [4,9,36,41], // topleft, topright, bottomleft, bottomright
+               misc: [84,82,53,54]
+            }
+        };
+
         this.endScene = false;
 
         this.distance = { x: 0, y: 0, vect: 0, max: 0};
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
-        //this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        //this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         /* AUDIO */
         this.bg_music = this.sound.add("bg_music", {
@@ -75,12 +108,14 @@ class LEVEL_1 extends Phaser.Scene {
 
         // Create an empty layer and give it the name "Layer 1"
         this.BGLayer = this.map.createBlankLayer("background", this.dungeonTile);
+        this.BGLayer.fill(this.TILES.BG);        
+
         this.groundLayer = this.map.createBlankLayer("ground", this.dungeonTile);
         this.stuffLayer = this.map.createBlankLayer("stuff", this.dungeonTile);
 
         this.dungeon = new DungeonWorld(this, 
-            this.dungeonLayout, this.map, 
-            this.BGLayer, this.groundLayer, this.stuffLayer)
+            this.dungeonLayout, this.map, this.TILES,
+            this.groundLayer, this.stuffLayer)
 
         //for(let room of this.dungeon.rooms){        }
         
@@ -152,11 +187,16 @@ class LEVEL_1 extends Phaser.Scene {
 
         // make walls collidable 
         //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
-        for(let i of this.dungeon.collides){ this.groundLayer.setCollision(i); }
+        for(let i in this.TILES.WALLS){ 
+            for(let tileIndex of this.TILES.WALLS[i]){
+                this.groundLayer.setCollision(tileIndex); 
+            }
+        }
+
         this.collider = 
             this.physics.add.collider(this.guy, this.groundLayer,
                 (obj1, obj2) => {
-                    console.log("bang")
+                    //console.log("bang")
                 }
             );
 
@@ -176,16 +216,15 @@ class LEVEL_1 extends Phaser.Scene {
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML, collisionToggle)
-        this.debug(false, false, true);
+        this.debug(false, true, true);
         /****************************/
     }
 
     debug(drawDebug, showHTML, collisionToggle){
         this.physics.world.drawDebug = drawDebug;
-        this.collider.active = collisionToggle;
 
         if(showHTML){// shows dungeon layout at bottom of page
-            const html = this.dungeon.drawToHtml({
+            const html = this.dungeonLayout.drawToHtml({
                 empty: " ",
                 wall: "📦",
                 floor: "☁️",
@@ -193,6 +232,13 @@ class LEVEL_1 extends Phaser.Scene {
             });
             // Append the element to an existing element on the page
             document.body.appendChild(html);
+        }
+
+        if(collisionToggle){
+            // press ENTER to TOGGLE ON/OFF collision
+            this.input.keyboard.on('keydown-ENTER', () => {
+                this.collider.active = !this.collider.active;
+            }, this);
         }
     }
 
@@ -209,6 +255,7 @@ class LEVEL_1 extends Phaser.Scene {
             
             if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
                 // this is the room guy is in!
+                console.log("room " + room.index);
                 this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
                 room.discovered = true;
                 room.active = true;
