@@ -121,12 +121,33 @@ class LEVEL_1 extends Phaser.Scene {
 
         // Set all tiles in the ground layer with blank tiles (brown tile)
         this.BGLayer.fill(bg);
+
+        // will fill this with coords while we loops thru dungeon rooms below....
+        // start by choosing random rooms to spawn in
+        let rm = [];
+        while(rm.length < 6){ // 6 cats --> 6 rooms
+            let tryIndex = Phaser.Math.Between(1,this.dungeon.rooms.length);
+            if(rm.indexOf(tryIndex) === -1){
+                rm.push(tryIndex);
+            }
+        }
+        this.catCoords = [
+            {x: -1, y: -1, room: rm[0] },
+            {x: -1, y: -1, room: rm[1] },
+            {x: -1, y: -1, room: rm[2] },
+            {x: -1, y: -1, room: rm[3] },
+            {x: -1, y: -1, room: rm[4] },
+            {x: -1, y: -1, room: rm[5] }, 
+        ]
+        
         
         //*************************************************************************************//
         // TODO: FIGURE OUT HOW TO MAKE ALLADIS A SEPARATE CLASS
         //********************************// BUILD-A-DUNGEON //********************************//
+        let i = 0;
         for(let room of this.dungeon.rooms){
             room.discovered = false;
+            room.index = i; i++;
             // Fill the room (minus the walls) with mostly clean floor tiles (90% of the time), but
             // occasionally place a dirty tile (10% of the time).
             this.groundLayer.weightedRandomize(
@@ -213,10 +234,23 @@ class LEVEL_1 extends Phaser.Scene {
                         this.groundLayer.putTileAt(doorWrap.bottom[1], 
                             room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y);
                     }
-                    
                 }
-        }
+
+                // STUFF LAYER!!!!!!
+
+                // GENERATE COORDS FOR CATS
+                for(let cat of this.catCoords){
+                    if(cat.room === room.index){
+                        // we're in the room we randomly chose earlier
+                        // choose random coords in this room
+                        cat.x = Phaser.Math.Between((room.left+1)*this.TILESIZE,(room.right-1)*this.TILESIZE);
+                        cat.y = Phaser.Math.Between((room.top+1)*this.TILESIZE,(room.bottom-1)*this.TILESIZE);
+                    }
+                }
+            }
         //*************************************************************************************//
+            console.log(this.catCoords)
+        
         
         //* PLAYER *//
         this.guy = new Player(this,
@@ -226,7 +260,41 @@ class LEVEL_1 extends Phaser.Scene {
         this.guy.setScale(1.5)
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
-            
+
+        // CAT SPRITES
+        this.cat = {
+            black: 
+                new Cat(this,
+                    this.catCoords[0].x, this.catCoords[0].y, 
+                    "cats-sprites", "black-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+            grey: 
+                new Cat(this,
+                    this.catCoords[1].x, this.catCoords[1].y, 
+                    "cats-sprites", "grey-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+            hairless: 
+                new Cat(this,
+                    this.catCoords[2].x, this.catCoords[2].y, 
+                    "cats-sprites", "hairless-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+            orange: 
+                new Cat(this,
+                    this.catCoords[3].x, this.catCoords[3].y,  
+                    "cats-sprites", "orange-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+            white: 
+                new Cat(this,
+                    this.catCoords[4].x, this.catCoords[4].y, 
+                    "cats-sprites", "white-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+            whiteblack: 
+                new Cat(this,
+                    this.catCoords[5].x, this.catCoords[5].y, 
+                    "cats-sprites", "whiteblack-idle0.png",
+                    this.SPEED, this.guy).setScale(2),
+        };
+
         // make walls collidable 
         for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
         this.physics.add.collider(this.guy, this.groundLayer);
@@ -254,7 +322,7 @@ class LEVEL_1 extends Phaser.Scene {
         /* MAIN CAM MOVEMENT */
         // find what room guy is in
         for(let room of this.dungeon.rooms){
-            room.discovered = true;
+            
             // convert x y coords from pixels to tilesa
             let x = this.guy.x / this.TILESIZE;
             let y = this.guy.y / this.TILESIZE;
@@ -262,6 +330,7 @@ class LEVEL_1 extends Phaser.Scene {
             if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
                 // this is the room guy is in!
                 this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
+                room.discovered = true;
             }
         }
 
