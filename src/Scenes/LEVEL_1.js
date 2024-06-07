@@ -208,6 +208,8 @@ class LEVEL_1 extends Phaser.Scene {
             }
         //*************************************************************************************//
         
+        
+        
         //* PLAYER *//
         this.guy = new Player(this,
             map.widthInPixels/2, map.heightInPixels/2, 
@@ -219,13 +221,15 @@ class LEVEL_1 extends Phaser.Scene {
 
         //* CAT SPRITES *//
         // GENERATE COORDS FOR CATS
-        // > start by choosing random rooms to spawn in
         this.catCoords = [];
-        while(this.catCoords.length < 6){ // 6 cats --> 6 rooms
-            let tryAdd = {x: -1, y: -1, room: Phaser.Math.Between(1,this.dungeon.rooms.length)};
-            if(this.catCoords.indexOf(tryAdd) === -1){ this.catCoords.push(tryAdd); }
+        // > start by choosing random rooms to spawn in
+        let rm = [];
+        while(rm.length < 6){ // 6 cats --> 6 rooms
+            let tryIndex = Phaser.Math.Between(1,this.dungeon.rooms.length-1);
+            if(rm.indexOf(tryIndex) === -1){ rm.push(tryIndex); }
         }
-        // > then assign random coords in the corect room
+        for(let i = 0; i < 6; i++){ this.catCoords.push({x: -1, y: -1, room: rm[i] }); }
+        // > choose random coords in the correct rooms to spawn cat at
         for(let room of this.dungeon.rooms){
             for(let cat of this.catCoords){
                 if(cat.room === room.index){
@@ -240,32 +244,32 @@ class LEVEL_1 extends Phaser.Scene {
         this.cat = {
             black: 
                 new Cat(this,
-                    this.catCoords[0].x, this.catCoords[0].y, 
+                    this.catCoords[0].x, this.catCoords[0].y, this.catCoords[0].room, 
                     "cats-sprites", "black-idle0.png",
                     this.SPEED, this.guy).setScale(2),
             grey: 
                 new Cat(this,
-                    this.catCoords[1].x, this.catCoords[1].y, 
+                    this.catCoords[1].x, this.catCoords[1].y, this.catCoords[1].room, 
                     "cats-sprites", "grey-idle0.png",
                     this.SPEED, this.guy).setScale(2),
             hairless: 
                 new Cat(this,
-                    this.catCoords[2].x, this.catCoords[2].y, 
+                    this.catCoords[2].x, this.catCoords[2].y, this.catCoords[2].room, 
                     "cats-sprites", "hairless-idle0.png",
                     this.SPEED, this.guy).setScale(2),
             orange: 
                 new Cat(this,
-                    this.catCoords[3].x, this.catCoords[3].y,  
+                    this.catCoords[3].x, this.catCoords[3].y,  this.catCoords[3].room, 
                     "cats-sprites", "orange-idle0.png",
                     this.SPEED, this.guy).setScale(2),
             white: 
                 new Cat(this,
-                    this.catCoords[4].x, this.catCoords[4].y, 
+                    this.catCoords[4].x, this.catCoords[4].y, this.catCoords[4].room, 
                     "cats-sprites", "white-idle0.png",
                     this.SPEED, this.guy).setScale(2),
             whiteblack: 
                 new Cat(this,
-                    this.catCoords[5].x, this.catCoords[5].y, 
+                    this.catCoords[5].x, this.catCoords[5].y, this.catCoords[5].room, 
                     "cats-sprites", "whiteblack-idle0.png",
                     this.SPEED, this.guy).setScale(2),
         };

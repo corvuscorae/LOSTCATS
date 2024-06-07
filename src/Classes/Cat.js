@@ -4,9 +4,10 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
     // spriteKey - key for the sprite image asset
     // leftKey - key for moving left
     // rightKey - key for moving right
-    constructor(scene, x, y, texture, frame, speed, player) {
+    constructor(scene, x, y, room, texture, frame, speed, player) {
         super(scene, x, y, texture, frame);
 
+        this.room = room;
         this.speed = speed;
         this.player = player;
         this.discovered = false;
