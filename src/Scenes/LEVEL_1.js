@@ -48,7 +48,7 @@ class LEVEL_1 extends Phaser.Scene {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
-        this.dungeon = new Dungeon({
+        this.dungeonLayout = new Dungeon({
             // The dungeon's grid size
             width: this.WALLSIZE*5,
             height: this.WALLSIZE*5,
@@ -63,156 +63,28 @@ class LEVEL_1 extends Phaser.Scene {
             });
         
         // Create a blank map
-        const map = this.make.tilemap({
+        this.map = this.make.tilemap({
             tileWidth: this.TILESIZE,
             tileHeight: this.TILESIZE,
-            width: this.dungeon.width,
-            height: this.dungeon.height
+            width: this.dungeonLayout.width,
+            height: this.dungeonLayout.height
         });
 
         // load tileset
-        this.dungeonTile = map.addTilesetImage("dungeon-packed", "dungeon");
+        this.dungeonTile = this.map.addTilesetImage("dungeon-packed", "dungeon");
 
         // Create an empty layer and give it the name "Layer 1"
-        this.BGLayer = map.createBlankLayer("background", this.dungeonTile);
-        this.groundLayer = map.createBlankLayer("ground", this.dungeonTile);
-        this.catLayer = map.createBlankLayer("stuff", this.dungeonTile);
+        this.BGLayer = this.map.createBlankLayer("background", this.dungeonTile);
+        this.groundLayer = this.map.createBlankLayer("ground", this.dungeonTile);
+        this.stuffLayer = this.map.createBlankLayer("stuff", this.dungeonTile);
 
-        // tile indexes
-        let empty = -1;   
-        let bg = 100;   
-        let normalFloors = [69,70,71,72,85,88,104,120]; 
-        let brokenFloors = [86,87,101,102,103,117,118,119];
-        let doors = {
-            left: [84,177],      // top,  bottom
-            right: [82, 176],    // top,  bottom
-            top: [126,127],       // left, right
-            bottom: [160,161]     // left, right
-        }; 
-        let doorWrap = {
-            left: [empty, 54],  // top,  bottom
-            right: [empty, 53], // top,  bottom
-            top: [84,82],       // left, right
-            bottom: [54,53]     // left, right
-        }     
-        let walls = {
-            left: 20,
-            right: 25,
-            top: [5,6,7,8],
-            bottom: [37,38,39,40],
-            corner: [4,9,36,41],  // topleft, topright, bottomleft, bottomright
-            misc: [84,82,53,54]
-        };
-
-        // Set all tiles in the ground layer with blank tiles (brown tile)
-        this.BGLayer.fill(bg);        
-        
-        //*************************************************************************************//
-        // TODO: FIGURE OUT HOW TO MAKE ALLADIS A SEPARATE CLASS
-        //********************************// BUILD-A-DUNGEON //********************************//
-        let i = 0;
-        for(let room of this.dungeon.rooms){
-            room.discovered = false;
-            room.index = i; i++;
-            // Fill the room (minus the walls) with mostly clean floor tiles (90% of the time), but
-            // occasionally place a dirty tile (10% of the time).
-            this.groundLayer.weightedRandomize(
-                [{ index: normalFloors, weight: 9 },    // 9/10 times, use index 6
-                { index: brokenFloors, weight: 1 }],    // 1/10 times, randomly pick 7, 8 or 26
-                room.x + 1, room.y + 1, 
-                room.width - 2, room.height - 2);
-
-                // Place the room corners tiles
-                this.groundLayer.putTileAt(walls.corner[0], room.left,  room.top);
-                this.groundLayer.putTileAt(walls.corner[1], room.right, room.top);
-                this.groundLayer.putTileAt(walls.corner[2], room.left,  room.bottom);
-                this.groundLayer.putTileAt(walls.corner[3], room.right, room.bottom);
-
-                // place left and right walls
-                this.groundLayer.fill(walls.left, room.left,  room.top + 1, 1, room.height - 2); // Left
-                this.groundLayer.fill(walls.right, room.right, room.top + 1, 1, room.height - 2); // Right
-
-                // top wall
-                map.randomize(
-                    room.x + 1, room.y, 
-                    room.width - 2, 1,
-                    walls.top, this.groundLayer
-                );
-
-                // bottom wall
-                map.randomize(
-                    room.x + 1, room.y + room.height - 1, 
-                    room.width - 2, 1,
-                    walls.bottom, this.groundLayer
-                );
-
-                // doors
-                let roomDoor = room.getDoorLocations();
-                let s = this.DOORSIZE;
-                for(let i = 0; i < roomDoor.length; i+=s){
-                    //console.log(roomDoor[i]);
-                    // LEFT
-                    if(roomDoor[i].x === 0){    
-                        // top edge
-                        this.groundLayer.putTileAt(doors.left[0], 
-                            room.x + roomDoor[i].x, room.y + roomDoor[i].y - 1);
-                        // bottom edge
-                        this.groundLayer.putTileAt(doors.left[doors.left.length-1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y - 1);
-                        // door wrap
-                        this.groundLayer.putTileAt(doorWrap.left[1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y);
-                    // RIGHT
-                    } else if(roomDoor[i].x === room.width - 1){    
-                        // top edge
-                        this.groundLayer.putTileAt(doors.right[0], 
-                            room.x + roomDoor[i].x, room.y + roomDoor[i].y - 1);
-                        // bottom edge
-                        this.groundLayer.putTileAt(doors.right[doors.right.length-1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y - 1);
-                        // door wrap
-                        this.groundLayer.putTileAt(doorWrap.right[1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y);
-                    // TOP
-                    } else if(roomDoor[i].y === 0){                 
-                        // left edge
-                        this.groundLayer.putTileAt(doors.top[0], 
-                            room.x + roomDoor[i].x - 1, room.y + roomDoor[i].y);
-                        // right edge
-                        this.groundLayer.putTileAt(doors.top[doors.top.length-1], 
-                            room.x + roomDoor[i+s-1].x - 1, room.y + roomDoor[i+s-1].y);
-                        // door wrap
-                        this.groundLayer.putTileAt(doorWrap.top[0], 
-                            room.x + roomDoor[i].x - 2, room.y + roomDoor[i+s-1].y);
-                        this.groundLayer.putTileAt(doorWrap.top[1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y);
-                    // BOTTOM
-                    } else if(roomDoor[i].y === room.height - 1){   
-                        // left edge
-                        this.groundLayer.putTileAt(doors.bottom[0], 
-                            room.x + roomDoor[i].x - 1, room.y + roomDoor[i].y);
-                        // right edge
-                        this.groundLayer.putTileAt(doors.bottom[doors.bottom.length-1], 
-                            room.x + roomDoor[i+s-1].x - 1, room.y + roomDoor[i+s-1].y);
-                        // door wrap
-                        this.groundLayer.putTileAt(doorWrap.bottom[0], 
-                            room.x + roomDoor[i].x - 2, room.y + roomDoor[i+s-1].y);
-                        this.groundLayer.putTileAt(doorWrap.bottom[1], 
-                            room.x + roomDoor[i+s-1].x, room.y + roomDoor[i+s-1].y);
-                    }
-                }
-
-                // STUFF LAYER!!!!!!
-
-                
-            }
-        //*************************************************************************************//
-        
-        
+        this.dungeon = new DungeonWorld(this, 
+            this.dungeonLayout, this.map, 
+            this.BGLayer, this.groundLayer, this.stuffLayer)
         
         //* PLAYER *//
         this.guy = new Player(this,
-            map.widthInPixels/2, map.heightInPixels/2, 
+            this.map.widthInPixels/2, this.map.heightInPixels/2, 
             "platformer_characters", "tile_0006.png",
             this.SPEED, cursors);
         this.guy.setScale(1.5)
@@ -275,23 +147,30 @@ class LEVEL_1 extends Phaser.Scene {
         };
 
         // make walls collidable 
-        for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
-        this.collider = this.physics.add.collider(this.guy, this.groundLayer);
+        //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
+        console.log(this.dungeon.collides);
+        for(let i of this.dungeon.collides){ console.log(i); this.groundLayer.setCollision(i); }
+        this.collider = 
+            this.physics.add.collider(this.guy, this.groundLayer,
+                (obj1, obj2) => {
+                    console.log("bang")
+                }
+            );
             
         //* CAMERAS *//
         let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
-        this.cameras.main.setBounds(0,0,map.widthInPixels, map.heightInPixels)
+        this.cameras.main.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
             .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
             .setOrigin(0).setViewport(0,0,viewSize,viewSize);
     
         this.miniMapCamera = this.cameras.add(viewSize, 0, game.config.width - viewSize, game.config.width - viewSize)
-            .setBounds(0, 0, map.widthInPixels, map.heightInPixels).setZoom(0.2)
+            .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.2)
             .setBackgroundColor(0x000).startFollow(this.guy, false, 0.4, 0.4)
             .ignore([this.dungeon.rooms[0]]);
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML, collisionToggle)
-        this.debug(false, false, false);
+        this.debug(false, false, true);
         /****************************/
     }
 
