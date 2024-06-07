@@ -43,21 +43,6 @@ class LEVEL_1 extends Phaser.Scene {
         "<h2>idk yet</h2><br>meep moop";
     }
 
-    debug(drawDebug, showHTML){
-        this.physics.world.drawDebug = drawDebug;
-
-        if(showHTML){// shows dungeon layout at bottom of page
-            const html = this.dungeon.drawToHtml({
-                empty: " ",
-                wall: "📦",
-                floor: "☁️",
-                door: "🚪"
-            });
-            // Append the element to an existing element on the page
-            document.body.appendChild(html);
-        }
-    }
-
     create() {
         this.init();
 
@@ -120,26 +105,7 @@ class LEVEL_1 extends Phaser.Scene {
         };
 
         // Set all tiles in the ground layer with blank tiles (brown tile)
-        this.BGLayer.fill(bg);
-
-        // will fill this with coords while we loops thru dungeon rooms below....
-        // start by choosing random rooms to spawn in
-        let rm = [];
-        while(rm.length < 6){ // 6 cats --> 6 rooms
-            let tryIndex = Phaser.Math.Between(1,this.dungeon.rooms.length);
-            if(rm.indexOf(tryIndex) === -1){
-                rm.push(tryIndex);
-            }
-        }
-        this.catCoords = [
-            {x: -1, y: -1, room: rm[0] },
-            {x: -1, y: -1, room: rm[1] },
-            {x: -1, y: -1, room: rm[2] },
-            {x: -1, y: -1, room: rm[3] },
-            {x: -1, y: -1, room: rm[4] },
-            {x: -1, y: -1, room: rm[5] }, 
-        ]
-        
+        this.BGLayer.fill(bg);        
         
         //*************************************************************************************//
         // TODO: FIGURE OUT HOW TO MAKE ALLADIS A SEPARATE CLASS
@@ -238,19 +204,9 @@ class LEVEL_1 extends Phaser.Scene {
 
                 // STUFF LAYER!!!!!!
 
-                // GENERATE COORDS FOR CATS
-                for(let cat of this.catCoords){
-                    if(cat.room === room.index){
-                        // we're in the room we randomly chose earlier
-                        // choose random coords in this room
-                        cat.x = Phaser.Math.Between((room.left+1)*this.TILESIZE,(room.right-1)*this.TILESIZE);
-                        cat.y = Phaser.Math.Between((room.top+1)*this.TILESIZE,(room.bottom-1)*this.TILESIZE);
-                    }
-                }
+                
             }
         //*************************************************************************************//
-            console.log(this.catCoords)
-        
         
         //* PLAYER *//
         this.guy = new Player(this,
@@ -261,7 +217,26 @@ class LEVEL_1 extends Phaser.Scene {
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
 
-        // CAT SPRITES
+        //* CAT SPRITES *//
+        // GENERATE COORDS FOR CATS
+        // > start by choosing random rooms to spawn in
+        this.catCoords = [];
+        while(this.catCoords.length < 6){ // 6 cats --> 6 rooms
+            let tryAdd = {x: -1, y: -1, room: Phaser.Math.Between(1,this.dungeon.rooms.length)};
+            if(this.catCoords.indexOf(tryAdd) === -1){ this.catCoords.push(tryAdd); }
+        }
+        // > then assign random coords in the corect room
+        for(let room of this.dungeon.rooms){
+            for(let cat of this.catCoords){
+                if(cat.room === room.index){
+                    // we're in the room we randomly chose earlier
+                    // choose random coords in this room
+                    cat.x = Phaser.Math.Between((room.left+1)*this.TILESIZE,(room.right-1)*this.TILESIZE);
+                    cat.y = Phaser.Math.Between((room.top+1)*this.TILESIZE,(room.bottom-1)*this.TILESIZE);
+                }
+            }
+        }
+
         this.cat = {
             black: 
                 new Cat(this,
@@ -297,7 +272,7 @@ class LEVEL_1 extends Phaser.Scene {
 
         // make walls collidable 
         for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
-        this.physics.add.collider(this.guy, this.groundLayer);
+        this.collider = this.physics.add.collider(this.guy, this.groundLayer);
             
         //* CAMERAS *//
         let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
@@ -311,9 +286,25 @@ class LEVEL_1 extends Phaser.Scene {
             .ignore([this.dungeon.rooms[0]]);
 
         /*******     DEBUG     *******/
-        // debug(drawDebug, showHTML)
-        this.debug(false, true);
+        // debug(drawDebug, showHTML, collisionToggle)
+        this.debug(false, false, false);
         /****************************/
+    }
+
+    debug(drawDebug, showHTML, collisionToggle){
+        this.physics.world.drawDebug = drawDebug;
+        this.collider.active = collisionToggle;
+
+        if(showHTML){// shows dungeon layout at bottom of page
+            const html = this.dungeon.drawToHtml({
+                empty: " ",
+                wall: "📦",
+                floor: "☁️",
+                door: "🚪"
+            });
+            // Append the element to an existing element on the page
+            document.body.appendChild(html);
+        }
     }
 
     update() {
