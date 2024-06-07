@@ -81,6 +81,8 @@ class LEVEL_1 extends Phaser.Scene {
         this.dungeon = new DungeonWorld(this, 
             this.dungeonLayout, this.map, 
             this.BGLayer, this.groundLayer, this.stuffLayer)
+
+        //for(let room of this.dungeon.rooms){        }
         
         //* PLAYER *//
         this.guy = new Player(this,
@@ -146,16 +148,20 @@ class LEVEL_1 extends Phaser.Scene {
                     this.SPEED, this.guy).setScale(2),
         };
 
+        
+
         // make walls collidable 
         //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
-        console.log(this.dungeon.collides);
-        for(let i of this.dungeon.collides){ console.log(i); this.groundLayer.setCollision(i); }
+        for(let i of this.dungeon.collides){ this.groundLayer.setCollision(i); }
         this.collider = 
             this.physics.add.collider(this.guy, this.groundLayer,
                 (obj1, obj2) => {
                     console.log("bang")
                 }
             );
+
+        // undiscovered rooms are invisible on minimap
+        this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
             
         //* CAMERAS *//
         let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
@@ -205,8 +211,26 @@ class LEVEL_1 extends Phaser.Scene {
                 // this is the room guy is in!
                 this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
                 room.discovered = true;
+                room.active = true;
+                this.invisLayer.forEachTile(
+                    t => (t.alpha = 0),
+                    this,
+                    room.x, room.y,
+                    room.width, room.height
+                )
+            } else{ 
+                room.active = false; 
+                if(room.discovered == true){
+                    this.invisLayer.forEachTile(
+                        t => (t.alpha = 0.7),
+                        this,
+                        room.x, room.y,
+                        room.width, room.height
+                    )
+                }
             }
         }
+
 
         /* spatial bg music logic (TEMP) */
         let distance = this.distance;
@@ -238,6 +262,11 @@ class LEVEL_1 extends Phaser.Scene {
         //    this.endScene = true; this.nextScene = "Load";
         //}
         //this.exitScene(this.endScene, this.nextScene);
+
+        //for(let i in this.cat){
+        //    if(this.cat[i].discovered == true){ this.cat[i].update(i); }
+        //}
+
     }
 
     fade(sound, target, rate){
