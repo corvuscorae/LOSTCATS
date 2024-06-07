@@ -11,6 +11,8 @@ class LEVEL_1 extends Phaser.Scene {
         this.WALLSIZE = 25;
         this.DOORSIZE = 2;
 
+        this.ACTIVEROOM = -1;
+
         this.EMPTYTILE = -1;
         this.TILES = {
             BG: [100],   
@@ -19,14 +21,10 @@ class LEVEL_1 extends Phaser.Scene {
                 broken: [86,87,101,102,103,117,118,119]
             },
             DOORS: {
-                //left: [177,177],     // top,  bottom
-                //right: [176, 176],   // top,  bottom
-                //top: [126,127],     // left, right
-                //bottom: [160,161]   // left, right
-                left: [this.EMPTYTILE,this.EMPTYTILE],     // top,  bottom
-                right: [this.EMPTYTILE, this.EMPTYTILE],   // top,  bottom
-                top: [this.EMPTYTILE,this.EMPTYTILE],     // left, right
-                bottom: [this.EMPTYTILE,this.EMPTYTILE]   // left, right
+                left: [177,177],     // top,  bottom
+                right: [176, 176],   // top,  bottom
+                top: [126,127],     // left, right
+                bottom: [160,161]   // left, right
             }, 
             DOORWRAP: { // aka, the walls surrounding each door
                 left: [84, 54],  // top,  bottom
@@ -151,40 +149,19 @@ class LEVEL_1 extends Phaser.Scene {
         }
 
         this.cat = {
-            black: 
-                new Cat(this,
-                    this.catCoords[0].x, this.catCoords[0].y, this.catCoords[0].room, 
-                    "cats-sprites", "black-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
-            grey: 
-                new Cat(this,
-                    this.catCoords[1].x, this.catCoords[1].y, this.catCoords[1].room, 
-                    "cats-sprites", "grey-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
-            hairless: 
-                new Cat(this,
-                    this.catCoords[2].x, this.catCoords[2].y, this.catCoords[2].room, 
-                    "cats-sprites", "hairless-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
-            orange: 
-                new Cat(this,
-                    this.catCoords[3].x, this.catCoords[3].y,  this.catCoords[3].room, 
-                    "cats-sprites", "orange-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
-            white: 
-                new Cat(this,
-                    this.catCoords[4].x, this.catCoords[4].y, this.catCoords[4].room, 
-                    "cats-sprites", "white-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
-            whiteblack: 
-                new Cat(this,
-                    this.catCoords[5].x, this.catCoords[5].y, this.catCoords[5].room, 
-                    "cats-sprites", "whiteblack-idle0.png",
-                    this.SPEED, this.guy).setScale(2),
+            black: null, grey: null, hairless: null,
+            orange: null, white: null, whiteblack: null
         };
-
+        let i = 0;
+        for(let catID in this.cat){
+            this.cat[catID] = 
+                new Cat(this,
+                    this.catCoords[i].x, this.catCoords[i].y, this.catCoords[i].room, 
+                    "cats-sprites", catID,
+                    this.SPEED, this.guy).setScale(2);
+            i++;
+        }
         
-
         // make walls collidable 
         //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
         for(let i in this.TILES.WALLS){ 
@@ -193,12 +170,16 @@ class LEVEL_1 extends Phaser.Scene {
             }
         }
 
+        // player collides with walls
         this.collider = 
             this.physics.add.collider(this.guy, this.groundLayer,
                 (obj1, obj2) => {
                     //console.log("bang")
                 }
             );
+        
+        // cats collide with walls
+
 
         // undiscovered rooms are invisible on minimap
         this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
@@ -243,7 +224,7 @@ class LEVEL_1 extends Phaser.Scene {
     }
 
     update() {
-        this.guy.update();
+        
 
         /* MAIN CAM MOVEMENT */
         // find what room guy is in
@@ -255,10 +236,10 @@ class LEVEL_1 extends Phaser.Scene {
             
             if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
                 // this is the room guy is in!
-                console.log("room " + room.index);
+                // console.log("room " + room.index);
                 this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
                 room.discovered = true;
-                room.active = true;
+                this.ACTIVEROOM = room.index;
                 this.invisLayer.forEachTile(
                     t => (t.alpha = 0),
                     this,
@@ -313,7 +294,10 @@ class LEVEL_1 extends Phaser.Scene {
         //for(let i in this.cat){
         //    if(this.cat[i].discovered == true){ this.cat[i].update(i); }
         //}
-
+        this.guy.update();
+        for(let catID in this.cat){
+            this.cat[catID].update(catID, this.ACTIVEROOM);
+        }
     }
 
     fade(sound, target, rate){

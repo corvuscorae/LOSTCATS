@@ -22,18 +22,23 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-         this.anims.create({
-            key: 'blackcat-IDLE',
-            frames: this.anims.generateFrameNames('cats-sprites', {
-                prefix: "black-idle",
-                start: 0,
-                end: 9,
-                suffix: ".png",
-                zeroPad: 0
-            }),
-            frameRate: 15,
-            repeat: -1
-        });
+        let catIDs = ["black", "grey", "hairless", "orange", "white", "whiteblack"];
+        
+        for(let ID of catIDs){
+            // IDLE
+            this.anims.create({
+                key: `${ID}-cat-IDLE`,
+                frames: this.anims.generateFrameNames('cats-sprites', {
+                    prefix: `${ID}-idle`,
+                    start: 0,
+                    end: 9,
+                    suffix: ".png",
+                    zeroPad: 0
+                }),
+                frameRate: 15,
+                repeat: -1
+            });
+        }
 
 
         /***** go to first level *****/
