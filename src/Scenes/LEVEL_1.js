@@ -135,11 +135,11 @@ class LEVEL_1 extends Phaser.Scene {
             let tryIndex = Phaser.Math.Between(1,this.dungeon.rooms.length-1);
             if(rm.indexOf(tryIndex) === -1){ rm.push(tryIndex); }
         }
-        for(let i = 0; i < 6; i++){ this.catCoords.push({x: -1, y: -1, room: rm[i] }); }
+        for(let i = 0; i < 6; i++){ this.catCoords.push({x: -1, y: -1, room: this.dungeon.rooms[rm[i]] }); }
         // > choose random coords in the correct rooms to spawn cat at
         for(let room of this.dungeon.rooms){
             for(let cat of this.catCoords){
-                if(cat.room === room.index){
+                if(cat.room.index === room.index){
                     // we're in the room we randomly chose earlier
                     // choose random coords in this room
                     cat.x = Phaser.Math.Between((room.left+1)*this.TILESIZE,(room.right-1)*this.TILESIZE);
@@ -296,7 +296,7 @@ class LEVEL_1 extends Phaser.Scene {
         //}
         this.guy.update();
         for(let catID in this.cat){
-            this.cat[catID].update(catID, this.ACTIVEROOM);
+            this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
         }
     }
 
