@@ -21,14 +21,14 @@ class LEVEL_1 extends Phaser.Scene {
                 broken: [86,87,101,102,103,117,118,119]
             },
             DOORS: {
-                left: [177,177],     // top,  bottom
-                right: [176, 176],   // top,  bottom
+                left: [177,177],    // top,  bottom
+                right: [176, 176],  // top,  bottom
                 top: [126,127],     // left, right
                 bottom: [160,161]   // left, right
             }, 
             DOORWRAP: { // aka, the walls surrounding each door
-                left: [84, 54],  // top,  bottom
-                right: [82, 53], // top,  bottom
+                left: [84, 54],     // top,  bottom
+                right: [82, 53],    // top,  bottom
                 top: [84,82],       // left, right
                 bottom: [54,53]     // left, right
             },    
@@ -58,7 +58,7 @@ class LEVEL_1 extends Phaser.Scene {
             detune: 0,
             loop: true
         });
-        this.bg_music.targetVolume = 1;
+        this.bg_music.targetVolume = 0;
         if(!this.bg_music.isPlaying) this.bg_music.play();
         this.startMusic = true;
         this.stopMusic = false;

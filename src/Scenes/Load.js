@@ -19,6 +19,12 @@ class Load extends Phaser.Scene {
         // audio
         this.load.setPath("./assets/audio/");
         this.load.audio("bg_music", "meepmoop_mixdown.ogg");     
+
+        // cat audio
+        this.load.audio("meow-1", "cat-98721.ogg");     
+        this.load.audio("meow-2", "cat-crying-81035.ogg");     
+        this.load.audio("meow-3", "cat-meow-14536.ogg");     
+        this.load.audio("purr", "purring-cat-156459.ogg");     
     }
 
     create() {
