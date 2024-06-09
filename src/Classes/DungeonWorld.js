@@ -85,17 +85,23 @@ class DungeonWorld extends Phaser.Scene {
         /* NOTE: we do a deep copy here instead of doing something like roomDoorX = roomdoor
             because the latter results in a reference to roomDoor 
             (which we dont want! we want two separate arrays with distinct sorts instead)       */
-        for(let door of roomDoor){
-            roomDoorX.push(door);
-            roomDoorY.push(door);
+        //for(let door of roomDoor){
+        for(let i = 0; i < roomDoor.length; i++){
+            if(roomDoor[i].x % (room.width - 1) === 0){ roomDoorX.push(roomDoor[i]); }
+            else if(roomDoor[i].y % (room.height - 1) === 0){ roomDoorY.push(roomDoor[i]); }
+            else{ continue; }
         }
         
         roomDoorX.sort( (a,b) => a.x - b.x );   // sorted wrt x
         roomDoorY.sort( (a,b) => a.y - b.y );   // sorted wrt y
         // we'll use roomDoorX for VERTICAL doors...
         // ...and roomDoorY for HORIZONTAL doors
+
+        console.log(room.index);
+        console.log(roomDoorX);
+        console.log(roomDoorY);
         
-        for(let i = 0; i < roomDoor.length; i+=s){
+        //for(let i = 0; i < roomDoor.length; i+=s){
             let orientation = "";
             let doorTiles = null; let wrapTiles = null;
             let x1 = -1; let y1 = -1;
@@ -103,7 +109,8 @@ class DungeonWorld extends Phaser.Scene {
 
             // vertical door on a LEFT or RIGHT wall
             // > roomDoor[i].x is 0 or room.width - 1
-            if(roomDoorX[i].x % (room.width - 1) === 0){ 
+            //if(roomDoorX[i].x % (room.width - 1) === 0){ 
+            for(let i = 0; i < roomDoorX.length; i+=s){
                 orientation = "vertical";
 
                 if(roomDoorX[i].x === 0){ // left
@@ -114,19 +121,27 @@ class DungeonWorld extends Phaser.Scene {
                     wrapTiles = TILES.DOORWRAP.right;
                 }
 
-                x1 = x2 = room.x + roomDoorX[i].x;
-                y1 = room.y + roomDoorX[i].y - 1;
+                x1 = x2 = room.x + roomDoorX[i].x  ;
+                y1 = room.y + roomDoorX[i].y    - 1;
                 y2 = room.y + roomDoorX[i+s-1].y - 1;
 
                 //if(y1 == y2){ 
                 //    console.log(`drama in room ${room.index}: y = ${roomDoorX[i].y} >:(`) 
                 //    console.log(roomDoorX)
                 //}
+
+                //this.putVerticalDoor(doorTiles, wrapTiles, x1, y1, x2, y2);
+                this.putDoor(orientation,
+                    doorTiles, wrapTiles, 
+                    x1, y1, x2, y2
+                );
             }
+            //}
             
             // horizontal door on a TOP or BOTTOM wall
             // > roomDoorX[i].y is 0 or room.height - 1
-            else if(roomDoorY[i].y % (room.height - 1) === 0){ 
+            //else if(roomDoorY[i].y % (room.height - 1) === 0){ 
+            for(let i = 0; i < roomDoorY.length; i+=s){
                 orientation = "horizontal";
                 
                 if(roomDoorY[i].y === 0){ // top
@@ -145,14 +160,18 @@ class DungeonWorld extends Phaser.Scene {
                 //    console.log(`drama in room ${room.index}: x = ${roomDoorY[i].x} >:(`) 
                 //    console.log(roomDoorY)
                 //}
-            }
-            else{ continue; }
-
-            this.putDoor(orientation,
+                //this.putHorizontalDoor(doorTiles, wrapTiles, x1, y1, x2, y2);
+                this.putDoor(orientation,
                     doorTiles, wrapTiles, 
                     x1, y1, x2, y2
             );
-        }
+            }
+            //}
+            //else{ continue; }
+
+            
+
+        //}
     }
 /*
     putVerticalDoor(doorTiles, wrapTiles, x1, y1, x2, y2){
@@ -193,6 +212,7 @@ class DungeonWorld extends Phaser.Scene {
             xShift = 0; yShift = 1;
         }else{ throw new Error(`Invalid door orientation: "${orientation}". Must be "horizontal" or "vertical".`); }
 
+        console.log(`putting door at (${x1},${y1}) and (${x2},${y2})`)
         // edge
          this.groundLayer.putTileAt(doorTiles[0], x1, y1);
 
