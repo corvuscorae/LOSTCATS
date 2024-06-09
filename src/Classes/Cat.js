@@ -7,7 +7,7 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, room, texture, ID, speed, player) {
         super(scene, x, y, texture);
 
-        this.room = room; console.log(this.room)
+        this.room = room; 
         this.speed = speed;
         this.discovered = false;
 
@@ -34,7 +34,6 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
             this, player,
             (obj1, obj2) => {
                 this.discovered = true;
-                console.log(`${ID} cat`);
             }
         );
 

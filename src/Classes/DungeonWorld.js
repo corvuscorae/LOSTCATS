@@ -23,8 +23,8 @@ class DungeonWorld extends Phaser.Scene {
 
     buildWalls(room, map, TILES){
         this.groundLayer.weightedRandomize(
-            [{ index: TILES.FLOORS.normal, weight: 9 },    // 9/10 times, use index 6
-            { index: TILES.FLOORS.broken, weight: 1 }],    // 1/10 times, randomly pick 7, 8 or 26
+            [{ index: TILES.FLOORS.normal, weight: 9 },    // 9/10 times, randomly pick from normal floors
+            { index: TILES.FLOORS.broken, weight: 1 }],    // 1/10 times, randomly pick from broken floors
             room.x + 1, room.y + 1, 
             room.width - 2, room.height - 2
         );
@@ -96,113 +96,59 @@ class DungeonWorld extends Phaser.Scene {
         roomDoorY.sort( (a,b) => a.y - b.y );   // sorted wrt y
         // we'll use roomDoorX for VERTICAL doors...
         // ...and roomDoorY for HORIZONTAL doors
-
-        console.log(room.index);
-        console.log(roomDoorX);
-        console.log(roomDoorY);
         
-        //for(let i = 0; i < roomDoor.length; i+=s){
-            let orientation = "";
-            let doorTiles = null; let wrapTiles = null;
-            let x1 = -1; let y1 = -1;
-            let x2 = -1; let y2 = -1;
+        let orientation = "";
+        let doorTiles = null; let wrapTiles = null;
+        let x1 = -1; let y1 = -1;
+        let x2 = -1; let y2 = -1;
 
-            // vertical door on a LEFT or RIGHT wall
-            // > roomDoor[i].x is 0 or room.width - 1
-            //if(roomDoorX[i].x % (room.width - 1) === 0){ 
-            for(let i = 0; i < roomDoorX.length; i+=s){
-                orientation = "vertical";
+        // VERTICAL DOORS (on a LEFT or RIGHT wall)
+        // > roomDoor[i].x is 0 or room.width - 1
+        for(let i = 0; i < roomDoorX.length; i+=s){
+            orientation = "vertical";
 
-                if(roomDoorX[i].x === 0){ // left
-                    doorTiles = TILES.DOORS.left;
-                    wrapTiles = TILES.DOORWRAP.left;
-                } else{ // right
-                    doorTiles = TILES.DOORS.right;
-                    wrapTiles = TILES.DOORWRAP.right;
-                }
-
-                x1 = x2 = room.x + roomDoorX[i].x  ;
-                y1 = room.y + roomDoorX[i].y    - 1;
-                y2 = room.y + roomDoorX[i+s-1].y - 1;
-
-                //if(y1 == y2){ 
-                //    console.log(`drama in room ${room.index}: y = ${roomDoorX[i].y} >:(`) 
-                //    console.log(roomDoorX)
-                //}
-
-                //this.putVerticalDoor(doorTiles, wrapTiles, x1, y1, x2, y2);
-                this.putDoor(orientation,
-                    doorTiles, wrapTiles, 
-                    x1, y1, x2, y2
-                );
+            if(roomDoorX[i].x === 0){ // left
+                doorTiles = TILES.DOORS.left;
+                wrapTiles = TILES.DOORWRAP.left;
+            } else{ // right
+                doorTiles = TILES.DOORS.right;
+                wrapTiles = TILES.DOORWRAP.right;
             }
-            //}
-            
-            // horizontal door on a TOP or BOTTOM wall
-            // > roomDoorX[i].y is 0 or room.height - 1
-            //else if(roomDoorY[i].y % (room.height - 1) === 0){ 
-            for(let i = 0; i < roomDoorY.length; i+=s){
-                orientation = "horizontal";
-                
-                if(roomDoorY[i].y === 0){ // top
-                    doorTiles = TILES.DOORS.top;
-                    wrapTiles = TILES.DOORWRAP.top;
-                } else{ // bottom
-                    doorTiles = TILES.DOORS.bottom;
-                    wrapTiles = TILES.DOORWRAP.bottom;
-                }
 
-                x1 = room.x + roomDoorY[i].x     - 1;
-                x2 = room.x + roomDoorY[i+s-1].x - 1;
-                y1 = y2 = room.y + roomDoorY[i].y;
-                
-                //if(x1 == x2){ 
-                //    console.log(`drama in room ${room.index}: x = ${roomDoorY[i].x} >:(`) 
-                //    console.log(roomDoorY)
-                //}
-                //this.putHorizontalDoor(doorTiles, wrapTiles, x1, y1, x2, y2);
-                this.putDoor(orientation,
-                    doorTiles, wrapTiles, 
-                    x1, y1, x2, y2
+            x1 = x2 = room.x + roomDoorX[i].x  ;
+            y1 = room.y + roomDoorX[i].y    - 1;
+            y2 = room.y + roomDoorX[i+s-1].y - 1;
+
+            this.putDoor(orientation,
+                doorTiles, wrapTiles, 
+                x1, y1, x2, y2
             );
-            }
-            //}
-            //else{ continue; }
-
+        }
             
+        // HORIZONTAL DOORS (on a TOP or BOTTOM wall)
+        // > roomDoorX[i].y is 0 or room.height - 1
+        for(let i = 0; i < roomDoorY.length; i+=s){
+            orientation = "horizontal";
+            
+            if(roomDoorY[i].y === 0){ // top
+                doorTiles = TILES.DOORS.top;
+                wrapTiles = TILES.DOORWRAP.top;
+            } else{ // bottom
+                doorTiles = TILES.DOORS.bottom;
+                wrapTiles = TILES.DOORWRAP.bottom;
+            }
 
-        //}
+            x1 = room.x + roomDoorY[i].x     - 1;
+            x2 = room.x + roomDoorY[i+s-1].x - 1;
+            y1 = y2 = room.y + roomDoorY[i].y;
+            
+            this.putDoor(orientation,
+                doorTiles, wrapTiles, 
+                x1, y1, x2, y2
+            );
+        }
     }
-/*
-    putVerticalDoor(doorTiles, wrapTiles, x1, y1, x2, y2){
-        // top edge
-        this.groundLayer.putTileAt(doorTiles[0], x1, y1);
 
-        // NOTE: if door length > 2, here is where you would put any middle tiles
-        // TODO: add this if time before finals due (or jus do it later -- only doing size 2 doors for final)
-
-        // bottom edge
-        this.groundLayer.putTileAt(doorTiles[doorTiles.length-1], x2, y2);
-
-        // door wrap
-        this.groundLayer.putTileAt(wrapTiles[0], x2, y1 - 1);
-        this.groundLayer.putTileAt(wrapTiles[1], x2, y2 + 1);
-    }
-    putHorizontalDoor(doorTiles, wrapTiles, x1, y1, x2, y2){
-        // left edge
-        this.groundLayer.putTileAt(doorTiles[0], x1, y1);
-
-        // TODO: add this if time before finals due (or jus do it later -- only doing size 2 doors for final)
-        // NOTE: if door length > 2, here is where you would put any middle tiles
-
-        // right edge
-        this.groundLayer.putTileAt(doorTiles[doorTiles.length-1], x2, y2);
-
-        // door wrap
-        this.groundLayer.putTileAt(wrapTiles[0], x1 - 1, y1);
-        this.groundLayer.putTileAt(wrapTiles[1], x2 + 1, y2);
-    }
-*/
     putDoor(orientation, doorTiles, wrapTiles, x1, y1, x2, y2){
         let xShift = null; let yShift = null;
         orientation = orientation.toLowerCase();
@@ -212,7 +158,6 @@ class DungeonWorld extends Phaser.Scene {
             xShift = 0; yShift = 1;
         }else{ throw new Error(`Invalid door orientation: "${orientation}". Must be "horizontal" or "vertical".`); }
 
-        console.log(`putting door at (${x1},${y1}) and (${x2},${y2})`)
         // edge
          this.groundLayer.putTileAt(doorTiles[0], x1, y1);
 

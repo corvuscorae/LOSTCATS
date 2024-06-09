@@ -236,7 +236,6 @@ class LEVEL_1 extends Phaser.Scene {
             
             if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
                 // this is the room guy is in!
-                // console.log("room " + room.index);
                 this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
                 room.discovered = true;
                 this.ACTIVEROOM = room.index;
