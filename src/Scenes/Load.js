@@ -4,6 +4,10 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
+        
+        this.load.setPath("./assets/");
+        this.load.bitmapFont("pixel_font", "pixel.png", "pixel.xml");
+
         // player sprite 
         this.load.setPath("./assets/player/");
         this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
@@ -28,6 +32,10 @@ class Load extends Phaser.Scene {
         this.load.audio("meow-2", "cat-crying-81035.ogg");     
         this.load.audio("meow-3", "cat-meow-14536.ogg");     
         this.load.audio("purr", "purring-cat-156459.ogg");     
+
+
+        
+
     }
 
     create() {
