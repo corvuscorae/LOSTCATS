@@ -124,7 +124,7 @@ class LEVEL_1 extends Phaser.Scene {
             this.map.widthInPixels/2, this.map.heightInPixels/2, 
             "rogue_knight", "player-idle0.png",
             this.SPEED, cursors);
-        this.guy.setScale(1.5)
+        this.guy.setScale(2.5)
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
 
@@ -334,9 +334,8 @@ class LEVEL_1 extends Phaser.Scene {
             this.renderShadow.fill(0x000000);
 
             //  Erase the 'mask' texture from it based on the player position
-            //  We - 107, because the mask image is 213px wide, so this puts it on the middle of the player
-            //  We then minus the scrollX/Y values, because the RenderTexture is pinned to the screen and doesn't scroll
-            this.renderShadow.erase('mask', (this.guy.x - this.guy.width*2) - cam.scrollX, (this.guy.y - this.guy.height*3) - cam.scrollY);
+            //  'mask' is 300x300px, so subtract half of that (150x150) from guy x and y
+            this.renderShadow.erase('mask', (this.guy.x - 150) - cam.scrollX, (this.guy.y - 150) - cam.scrollY);
         }
     }
 
