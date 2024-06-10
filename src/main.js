@@ -22,7 +22,7 @@ let config = {
     },
     width: 1000 ,
     height: 800 ,
-    scene: [Load, LEVEL_1]
+    scene: [Load, TITLE, CREDITS, LEVEL_1]
 }
 
 var cursors;
