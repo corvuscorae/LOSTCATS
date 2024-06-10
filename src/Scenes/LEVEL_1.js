@@ -44,6 +44,8 @@ class LEVEL_1 extends Phaser.Scene {
 
         this.endScene = false;
 
+        this.shadowActive = true;
+
         this.distance = { x: 0, y: 0, vect: 0, max: 0};
 
         // set up Phaser-provided cursor key input
@@ -120,7 +122,7 @@ class LEVEL_1 extends Phaser.Scene {
         //* PLAYER *//
         this.guy = new Player(this,
             this.map.widthInPixels/2, this.map.heightInPixels/2, 
-            "platformer_characters", "tile_0006.png",
+            "rogue_knight", "player-idle0.png",
             this.SPEED, cursors);
         this.guy.setScale(1.5)
             .setSize(this.guy.width / 2, this.guy.height / 2)
@@ -212,12 +214,12 @@ class LEVEL_1 extends Phaser.Scene {
             .ignore(this.groundLayer).ignore(this.renderShadow).ignore(this.guy);
 
         /*******     DEBUG     *******/
-        // debug(drawDebug, showHTML, collisionToggle)
-        this.debug(false, true, true);
+        // debug(drawDebug, showHTML, collisionToggle, shadowToggle)
+        this.debug(false, false, true, true);
         /****************************/
     }
 
-    debug(drawDebug, showHTML, collisionToggle){
+    debug(drawDebug, showHTML, collisionToggle, shadowToggle){
         this.physics.world.drawDebug = drawDebug;
 
         if(showHTML){// shows dungeon layout at bottom of page
@@ -232,9 +234,16 @@ class LEVEL_1 extends Phaser.Scene {
         }
 
         if(collisionToggle){
-            // press ENTER to TOGGLE ON/OFF collision
-            this.input.keyboard.on('keydown-ENTER', () => {
+            // press C to TOGGLE ON/OFF collision
+            this.input.keyboard.on('keydown-C', () => {
                 this.collider.active = !this.collider.active;
+            }, this);
+        }
+
+        if(shadowToggle){
+            // press C to TOGGLE ON/OFF collision
+            this.input.keyboard.on('keydown-S', () => {
+                this.shadowActive = !this.shadowActive;
             }, this);
         }
     }
@@ -320,13 +329,15 @@ class LEVEL_1 extends Phaser.Scene {
         //  Clear the RenderTexture
         this.renderShadow.clear();
 
-        //  Fill it in black
-        this.renderShadow.fill(0x000000);
+        if(this.shadowActive){
+            //  Fill it in black
+            this.renderShadow.fill(0x000000);
 
-        //  Erase the 'mask' texture from it based on the player position
-        //  We - 107, because the mask image is 213px wide, so this puts it on the middle of the player
-        //  We then minus the scrollX/Y values, because the RenderTexture is pinned to the screen and doesn't scroll
-        this.renderShadow.erase('mask', (this.guy.x - this.guy.width*4) - cam.scrollX, (this.guy.y - this.guy.height*4) - cam.scrollY);
+            //  Erase the 'mask' texture from it based on the player position
+            //  We - 107, because the mask image is 213px wide, so this puts it on the middle of the player
+            //  We then minus the scrollX/Y values, because the RenderTexture is pinned to the screen and doesn't scroll
+            this.renderShadow.erase('mask', (this.guy.x - this.guy.width*2) - cam.scrollX, (this.guy.y - this.guy.height*3) - cam.scrollY);
+        }
     }
 
     fade(sound, target, rate){

@@ -10,7 +10,7 @@ class Load extends Phaser.Scene {
 
         // player sprite 
         this.load.setPath("./assets/player/");
-        this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
+        this.load.atlas("rogue_knight", "rogue-knight-packed.png", "rogue-knight-packed.json");
 
         
         // cats
