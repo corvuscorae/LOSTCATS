@@ -1,0 +1,1280 @@
+{
+	"textures": [
+		{
+			"image": "ORB.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1920,
+				"h": 512
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "ORB-0.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 128,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 256,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 384,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 512,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 640,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-6.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 768,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-7.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 896,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-8.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1024,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-9.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1152,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-10.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1280,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-11.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1408,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-12.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1536,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-13.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1664,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-14.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1792,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-15.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 0,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-16.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 128,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-17.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 256,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-18.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 384,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-19.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 512,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-20.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 640,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-21.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 768,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-22.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 896,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-23.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1024,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-24.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1152,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-25.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1280,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-26.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1408,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-27.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1536,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-28.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1664,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-29.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1792,
+						"y": 128,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-30.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 0,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-31.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 128,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-32.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 256,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-33.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 384,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-34.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 512,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-35.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 640,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-36.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 768,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-37.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 896,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-38.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1024,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-39.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1152,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-40.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1280,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-41.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1408,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-42.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1536,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-43.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1664,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-44.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1792,
+						"y": 256,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-45.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 0,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-46.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 128,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-47.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 256,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-48.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 384,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-49.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 512,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-50.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 640,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-51.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 768,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-52.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 896,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-53.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1024,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-54.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1152,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-55.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1280,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-56.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1408,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-57.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1536,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-58.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1664,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "ORB-59.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1792,
+						"y": 384,
+						"w": 128,
+						"h": 128
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:5112287d6e027cb93ed715398222929c:d4fee660c974799d9a51c5369fc87a80:2ac04340706bafcda55ee592a5fa969c$"
+	}
+}

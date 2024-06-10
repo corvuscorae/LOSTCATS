@@ -79,6 +79,8 @@ class LEVEL_1 extends Phaser.Scene {
     create() {
         this.init();
 
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
         this.dungeonLayout = new Dungeon({
@@ -107,11 +109,11 @@ class LEVEL_1 extends Phaser.Scene {
         this.dungeonTile = this.map.addTilesetImage("dungeon-packed", "dungeon");
 
         // Create an empty layer and give it the name "Layer 1"
-        this.BGLayer = this.map.createBlankLayer("background", this.dungeonTile);
+        this.BGLayer = this.map.createBlankLayer("background", this.dungeonTile).setPipeline('Light2D');
         this.BGLayer.fill(this.TILES.BG);        
 
-        this.groundLayer = this.map.createBlankLayer("ground", this.dungeonTile);
-        this.stuffLayer = this.map.createBlankLayer("stuff", this.dungeonTile);
+        this.groundLayer = this.map.createBlankLayer("ground", this.dungeonTile).setPipeline('Light2D');
+        this.stuffLayer = this.map.createBlankLayer("stuff", this.dungeonTile).setPipeline('Light2D');
 
         this.dungeon = new DungeonWorld(this, 
             this.dungeonLayout, this.map, this.TILES,
@@ -122,9 +124,9 @@ class LEVEL_1 extends Phaser.Scene {
         //* PLAYER *//
         this.guy = new Player(this,
             this.map.widthInPixels/2, this.map.heightInPixels/2, 
-            "rogue_knight", "player-idle0.png",
+            "ORB", "ORB-0.png",
             this.SPEED, cursors);
-        this.guy.setScale(2.5)
+        this.guy.setScale(0.5)
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
 
@@ -192,13 +194,21 @@ class LEVEL_1 extends Phaser.Scene {
         this.miniMapLayer = this.map.createBlankLayer("minimap", this.dungeonTile);
         for(let room of this.dungeon.rooms){
             this.miniMapLayer.fill(162,
-                room.x + 1, room.y + 1, 
-                room.width - 2, room.height - 2
+                room.x, room.y, 
+                room.width, room.height
             );
         }
+        
+        // light
+        this.lights.enable();
+        this.lights.setAmbientColor(0x808080);
+
+        this.spotlight = this.lights.addLight(this.guy.x, this.guy.y, 100).setIntensity(5);
 
         // undiscovered rooms are invisible on minimap
         this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
+
+        
             
         //* CAMERAS *//
         let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
@@ -318,12 +328,12 @@ class LEVEL_1 extends Phaser.Scene {
         //for(let i in this.cat){
         //    if(this.cat[i].discovered == true){ this.cat[i].update(i); }
         //}
-        this.guy.update();
+        this.guy.update(this.spotlight);
         for(let catID in this.cat){
             this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
         }
 
-        //  Draw the spotlight on the player
+        // erase shadow from around player
         const cam = this.cameras.main;
 
         //  Clear the RenderTexture

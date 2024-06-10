@@ -10,7 +10,7 @@ class Load extends Phaser.Scene {
 
         // player sprite 
         this.load.setPath("./assets/player/");
-        this.load.atlas("rogue_knight", "rogue-knight-packed.png", "rogue-knight-packed.json");
+        this.load.atlas("ORB", "ORB.png", "ORB.json");
 
         
         // cats
@@ -56,6 +56,19 @@ class Load extends Phaser.Scene {
                 repeat: -1
             });
         }
+
+        this.anims.create({
+            key: "ORB-IDLE",
+            frames: this.anims.generateFrameNames('ORB', {
+                prefix: "ORB-",
+                start: 0,
+                end: 59,
+                suffix: ".png",
+                zeroPad: 0
+            }),
+            frameRate: 24,
+            repeat: -1
+        });
 
 
         /***** go to first level *****/
