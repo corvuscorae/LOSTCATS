@@ -8,7 +8,7 @@ class TITLE extends Phaser.Scene {
     }
 
     create() {
-
+        this.scene.start("LEVEL_1");
     }
 
     update() {

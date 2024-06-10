@@ -8,13 +8,16 @@ class Load extends Phaser.Scene {
         this.load.setPath("./assets/player/");
         this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
 
+        
         // cats
         this.load.setPath("./assets/cats/");
         this.load.multiatlas("cats-sprites", "cat-sprite-sheet.json");
 
         // environment tiles
         this.load.setPath("./assets/enviro/");
-        this.load.image("dungeon", "dungeon-packed.png");                 
+        this.load.image("dungeon", "dungeon-packed.png");    
+        
+        this.load.image('mask', 'mask.png');             
        
         // audio
         this.load.setPath("./assets/audio/");

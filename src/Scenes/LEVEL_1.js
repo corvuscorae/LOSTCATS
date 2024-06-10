@@ -161,6 +161,12 @@ class LEVEL_1 extends Phaser.Scene {
                     this.SPEED, this.guy).setScale(2);
             i++;
         }
+
+        this.renderShadow = this.add.renderTexture(0,0,this.scale.width,this.scale.height);
+        this.renderShadow.setOrigin(0,0);
+        this.renderShadow.setScrollFactor(0,0);
+        console.log()
+        
         
         // make walls collidable 
         //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
@@ -180,6 +186,14 @@ class LEVEL_1 extends Phaser.Scene {
         
         // cats collide with walls
 
+        // minimap tiles
+        this.miniMapLayer = this.map.createBlankLayer("minimap", this.dungeonTile);
+        for(let room of this.dungeon.rooms){
+            this.miniMapLayer.fill(162,
+                room.x + 1, room.y + 1, 
+                room.width - 2, room.height - 2
+            );
+        }
 
         // undiscovered rooms are invisible on minimap
         this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
@@ -188,12 +202,14 @@ class LEVEL_1 extends Phaser.Scene {
         let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
         this.cameras.main.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
             .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
-            .setOrigin(0).setViewport(0,0,viewSize,viewSize);
-    
+            .setOrigin(0).setViewport(0,0,viewSize,viewSize)
+            .ignore(this.miniMapLayer);
+
         this.miniMapCamera = this.cameras.add(viewSize, 0, game.config.width - viewSize, game.config.width - viewSize)
-            .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.2)
-            .setBackgroundColor(0x000).startFollow(this.guy, false, 0.4, 0.4)
-            .ignore([this.dungeon.rooms[0]]);
+            .startFollow(this.guy)//.stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
+            .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.15)
+            .setDeadzone(this.WALLSIZE*this.TILESIZE,this.WALLSIZE*this.TILESIZE)
+            .ignore(this.groundLayer).ignore(this.renderShadow).ignore(this.guy);
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML, collisionToggle)
@@ -297,6 +313,20 @@ class LEVEL_1 extends Phaser.Scene {
         for(let catID in this.cat){
             this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
         }
+
+        //  Draw the spotlight on the player
+        const cam = this.cameras.main;
+
+        //  Clear the RenderTexture
+        this.renderShadow.clear();
+
+        //  Fill it in black
+        this.renderShadow.fill(0x000000);
+
+        //  Erase the 'mask' texture from it based on the player position
+        //  We - 107, because the mask image is 213px wide, so this puts it on the middle of the player
+        //  We then minus the scrollX/Y values, because the RenderTexture is pinned to the screen and doesn't scroll
+        this.renderShadow.erase('mask', (this.guy.x - this.guy.width*4) - cam.scrollX, (this.guy.y - this.guy.height*4) - cam.scrollY);
     }
 
     fade(sound, target, rate){
