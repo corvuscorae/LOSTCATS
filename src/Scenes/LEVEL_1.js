@@ -31,8 +31,8 @@ class LEVEL_1 extends Phaser.Scene {
             "ORB", "ORB-0.png",
             this.SPEED, cursors);
         this.guy.setScale(0.5)
-            .setSize(this.guy.width / 2, this.guy.height / 2)
-            .setOffset(this.guy.width / 4, this.guy.height / 2);
+            // shrink collision box so player has to get close enough to cat to light it up before collision is triggered
+            .setSize(this.guy.width / 4, this.guy.height / 4)   
 
         // player vfx
         my.vfx.sparkle.startFollow(this.guy, 0, 0, false)
@@ -90,7 +90,7 @@ class LEVEL_1 extends Phaser.Scene {
 
         /* update all cats */
         for(let catID in this.cat){
-            this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
+            this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy);
         }
 
         /* update renderShadow */
@@ -106,7 +106,7 @@ class LEVEL_1 extends Phaser.Scene {
 /* VARIABLES + CURSORS */
     init() {
         this.flicker = 10;
-        this.SPEED = 500; 
+        this.SPEED = 3000; 
         this.TILESIZE = 32;
         this.WALLSIZE = 25;
         this.DOORSIZE = 2;
@@ -221,8 +221,8 @@ class LEVEL_1 extends Phaser.Scene {
                 if(cat.room.index === room.index){
                     // we're in the room we randomly chose earlier
                     // choose random coords in this room
-                    cat.x = Phaser.Math.Between((room.left+1)*this.TILESIZE,(room.right-1)*this.TILESIZE);
-                    cat.y = Phaser.Math.Between((room.top+1)*this.TILESIZE,(room.bottom-1)*this.TILESIZE);
+                    cat.x = Phaser.Math.Between((room.left+3)*this.TILESIZE,(room.right-3)*this.TILESIZE);
+                    cat.y = Phaser.Math.Between((room.top+3)*this.TILESIZE,(room.bottom-3)*this.TILESIZE);
                 }
             }
         }
@@ -238,6 +238,7 @@ class LEVEL_1 extends Phaser.Scene {
                     this.catCoords[i].x, this.catCoords[i].y, this.catCoords[i].room, 
                     "cats-sprites", catID,
                     this.SPEED, this.guy).setScale(2);
+            this.cat[catID].setSize(this.cat[catID].width * 2, this.cat[catID].height * 3.5);
             i++;
         }
     }
@@ -252,12 +253,34 @@ class LEVEL_1 extends Phaser.Scene {
         }
 
         // player collides with walls
-        this.collider = 
+        this.playerCollider = 
             this.physics.add.collider(this.guy, this.groundLayer,
                 (obj1, obj2) => {
                     //console.log("bang")
                 }
             );
+        
+        // cats collide with walls
+        for(let catID in this.cat){
+            this.physics.add.collider(this.cat[catID], this.groundLayer,
+                (obj1, obj2) => {
+                    //console.log("bang")
+                }
+            );
+        }
+
+        // cats collide with other cats
+        for(let catID in this.cat){
+            for(let other_catID in this.cat){
+                if(other_catID != catID){
+                    this.physics.add.collider(this.cat[catID], this.cat[other_catID],
+                        (obj1, obj2) => {
+                            //console.log("bang")
+                        }
+                    );
+                }
+            }
+        }
     }
 
 /* CAMERAS */
@@ -308,7 +331,7 @@ class LEVEL_1 extends Phaser.Scene {
         if(collisionToggle){
             // press C to TOGGLE ON/OFF collision
             this.input.keyboard.on('keydown-C', () => {
-                this.collider.active = !this.collider.active;
+                this.playerCollider.active = !this.playerCollider.active;
             }, this);
         }
 

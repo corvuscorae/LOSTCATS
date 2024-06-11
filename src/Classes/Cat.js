@@ -1,39 +1,46 @@
 class Cat extends Phaser.Physics.Arcade.Sprite {
-
-    // x,y - starting sprite location
-    // spriteKey - key for the sprite image asset
-    // leftKey - key for moving left
-    // rightKey - key for moving right
+    // TODO: FIX MEOW BUG
+    //  should stop meowing when discovered but start meowing if lost (stopped following guy)
     constructor(scene, x, y, room, texture, ID, speed, player) {
         super(scene, x, y, texture);
 
         this.room = room; 
         this.speed = speed;
-        this.discovered = false;
 
+        this.following = false;
         this.meowing = {state: false, meowID: -1};
 
-        this.distance = { 
+        this.relativePosition = { x: 0, y: 0}
+        this.collisionOffset = {x: 200, y: 200};
+        this.overlapping = false;
+        this.moveToward = { x: 0, y: 0 }
+
+        this.distance = { // will be used for spatial audie effect
             x: 0, 
             y: 0, 
             vect: 0, 
             max: room.width * room.height
         };
+
         this.target = {x: x, y: y}; 
 
         scene.physics.add.existing(this);
         scene.add.existing(this);
 
-        this.create(scene, ID, player);
+        this.create(scene, speed, player);
 
     }
 
-    create(scene, ID, player){
+    create(scene, speed, player){
+        console.log(this);
         // cat overlap
         scene.physics.add.overlap(
             this, player,
             (obj1, obj2) => {
-                this.discovered = true;
+                // follow player while overlap
+                obj1.setSize(this.width/3, this.height/2)
+                    .setOffset(this.width/3, this.height/2);
+                this.following = true;
             }
         );
 
@@ -54,20 +61,48 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    update(ID, activeRoom, guy) {    // player passed from level
+    update(scene,ID, activeRoom, guy) {    // player passed from level
         if(activeRoom === this.room.index){ 
-            this.anims.play(`${ID}-cat-IDLE`, true); 
-            
-            this.playMeow(Phaser.Math.Between(0,this.meow.length-1));
+            if(!this.overlapping && !this.following) this.playMeow(Phaser.Math.Between(0,this.meow.length-1));
         } else{ this.stopMeow(); }
 
-        // if cat has been discovered, follow player (?)
-        // https://newdocs.phaser.io/docs/3.80.0/Phaser.Physics.Arcade.ArcadePhysics#accelerateToObject
-        //if(this.discovered == true){
-        //    console.log(`found ${ID} cat`);
-        //}
+        
+        if(this.following == true){
+            this.room.index = activeRoom;
+            this.collisionCheck(guy);
+            
+            if(this.overlapping == true){
+                scene.physics.moveTo(this, 
+                    this.moveToward.x, this.moveToward.y, 
+                    guy.body.speed/Phaser.Math.Between(1.2,1.5)
+                );
+
+                this.overlapping = false;
+            }
+            else{ 
+                this.body.setVelocity(0);
+                this.following = false;
+            }
+                
+
+            if(this.x > guy.x){ 
+                this.setFlip(true); 
+                this.relativePosition.x = -1;
+            }
+            else {//if(this.x < guy.x){ 
+                this.resetFlip(); 
+            }
+
+            if(this.body.speed > 0){
+                this.anims.play(`${ID}-cat-WALK`, true); 
+            }
+            else{
+                this.anims.play(`${ID}-cat-IDLE`, true); 
+            }
+        }
 
         //* spatial meows */
+        this.target.x = this.x; this.target.y = this.y;
         let distance = this.distance;
         distance.x = guy.x - this.target.x;
         distance.y = guy.y - this.target.y;
@@ -81,6 +116,24 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
             }
         }
     }
+
+    // custom collision
+    collisionCheck(guy){
+        if (Math.abs(this.x - guy.x) > 
+            (this.displayWidth/2 + guy.displayWidth/2) + this.collisionOffset.x) { return; }
+        if (Math.abs(this.y - guy.y) > 
+            (this.displayHeight/2 + guy.displayHeight/2) + this.collisionOffset.y) { return; }
+        
+        // we only reach here if there is a collision. yippie
+        this.following = true;
+        this.overlapping = true;
+        this.moveToward.x = Phaser.Math.FloatBetween(guy.x - 50, guy.x + 50);
+        this.moveToward.y = Phaser.Math.FloatBetween(guy.y - 50, guy.y + 50);
+
+        console.log("meow")
+    }
+
+    
 
     playMeow(i){
         if(this.meowing.state == false){

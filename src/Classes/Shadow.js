@@ -23,7 +23,7 @@ class Shadow extends Phaser.Scene {
 
         this.flicker--;
         if(this.flicker < 0){
-            mask.setScale(Phaser.Math.FloatBetween(0.9,1.2));
+            mask.setScale(Phaser.Math.FloatBetween(1.2,1.5));
             this.flicker = Phaser.Math.FloatBetween(3,10);
         }
 

@@ -56,6 +56,19 @@ class Load extends Phaser.Scene {
                 frameRate: 15,
                 repeat: -1
             });
+            // walk
+            this.anims.create({
+                key: `${ID}-cat-WALK`,
+                frames: this.anims.generateFrameNames('cats-sprites', {
+                    prefix: `${ID}-walk`,
+                    start: 0,
+                    end: 7,
+                    suffix: ".png",
+                    zeroPad: 0
+                }),
+                frameRate: 15,
+                repeat: -1
+            });
         }
 
         this.anims.create({
