@@ -5,6 +5,105 @@ class LEVEL_1 extends Phaser.Scene {
 
     preload(){ }
 
+    create() {
+        //* VARIABLES, CURSORS *//
+        this.init();
+
+        //* UI *//
+        this.initUI();
+
+        //* MAP, LAYERS, DUNGEON *//
+        this.initEnvironment();
+
+        //* PARTICLES *//
+        my.vfx.sparkle = this.add.particles(0, 0, 'sparkle', {
+            speed: 35,
+            scale: { start: 0.15, end: 0 },
+            alpha: { start: 1, end: 0.5 },
+            // higher steps value = more time to go btwn min/max
+            lifespan: { min: 10, max: 2000, steps: 500 },
+            tint: [ 0x9ae4c4, 0xc5b1f2, 0xabdfd5, 0xffffff, 0xffffff ],
+        })        
+        
+        //* PLAYER *//
+        this.guy = new Player(this,
+            this.map.widthInPixels/2, this.map.heightInPixels/2, 
+            "ORB", "ORB-0.png",
+            this.SPEED, cursors);
+        this.guy.setScale(0.5)
+            .setSize(this.guy.width / 2, this.guy.height / 2)
+            .setOffset(this.guy.width / 4, this.guy.height / 2);
+
+        // player vfx
+        my.vfx.sparkle.startFollow(this.guy, 0, 0, false)
+
+        //* CAT SPRITES *//
+        this.catHandler();
+        this.children.bringToTop(this.guy) // put guy in front of cats
+        
+        //* COLLISION *//
+        this.collisionHandler();
+
+        //* LIGHTING EFFECTS *//
+        // casts a shadow over entire scene. 
+        // (i found that this is a nice way to give light a softer edge as compared to a new light object alone)
+        this.renderShadow = new Shadow(this);
+        
+        // light
+        this.lights.enable();
+        this.spotlight = this.lights.addLight(0, 0, 150).setIntensity(2);    
+ 
+        //* CAMERAS *//
+        this.camz();
+
+        /*******     DEBUG     *******/
+        // debug(drawDebug, showHTML, collisionToggle, shadowToggle)
+        this.debug(false, false, true, true);
+        /****************************/
+    }
+
+    update() {
+        for(let room of this.dungeon.rooms){
+            let x = this.guy.x / this.TILESIZE; // converts x y coords from pixels to tiles
+            let y = this.guy.y / this.TILESIZE; //
+            
+            if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
+                /* this is the room guy is in! */
+                room.discovered = true;
+                this.ACTIVEROOM = room.index;
+
+                // snap camera to current room
+                this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
+                
+                this.setInvisAlpha(0, room);
+            } else{ 
+                /* guy is NOT in this room */
+                room.active = false; 
+                if(room.discovered == true){
+                    this.setInvisAlpha(0.7, room);
+                }
+            }
+        }
+        
+        /* update player */
+        this.guy.update(this.spotlight);
+
+        /* update all cats */
+        for(let catID in this.cat){
+            this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
+        }
+
+        /* update renderShadow */
+        this.renderShadow.update(this, this.guy, this.mask, this.shadowActive);
+    }
+
+////////////////////////////////////////////////////////////////////////
+//-----------------------// HELPER FUNCTIONS //-----------------------//
+////////////////////////////////////////////////////////////////////////
+
+//* CREATE() HELPERS -------------------------------------------------//
+
+/* VARIABLES + CURSORS */
     init() {
         this.flicker = 10;
         this.SPEED = 500; 
@@ -44,45 +143,25 @@ class LEVEL_1 extends Phaser.Scene {
         };
 
         this.endScene = false;
-
         this.shadowActive = true;
-
-        this.distance = { x: 0, y: 0, vect: 0, max: 0};
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
         this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    }
 
-        /* AUDIO */
-        this.bg_music = this.sound.add("bg_music", {
-            volume: 0,
-            rate: 1,
-            detune: 0,
-            loop: true
-        });
-        this.bg_music.targetVolume = 0;
-        if(!this.bg_music.isPlaying) this.bg_music.play();
-        this.startMusic = true;
-        this.stopMusic = false;
-        
-        // DISTANCE INIT
-        this.distance.max = 
-            Math.sqrt(  Math.pow((game.config.width), 2) + 
-                        Math.pow((game.config.height), 2));
-        this.target = {x: 0, y: 0}; // TEMP
-
+/* INIT UI */
+    initUI(){
         /* HTML */
         document.getElementById('description').innerHTML = 
         "<h2>idk yet</h2><br>meep moop";
     }
 
-    create() {
-        this.init();
-
+/* INIT MAP, LAYERS, DUNGEON */
+    initEnvironment(){
         this.mask = this.add.image(0,0,'mask').setOrigin(0.5);
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
         this.dungeonLayout = new Dungeon({
             // The dungeon's grid size
@@ -119,42 +198,15 @@ class LEVEL_1 extends Phaser.Scene {
         this.dungeon = new DungeonWorld(this, 
             this.dungeonLayout, this.map, this.TILES,
             this.groundLayer, this.stuffLayer)
+    }
 
+/* CATS */
+    catHandler(){
+        // randomy placed in rooms
 
-        
-
-
-        this.renderShadow = this.add.renderTexture(0,0,this.scale.width,this.scale.height);
-        this.renderShadow.setOrigin(0,0);
-        this.renderShadow.setScrollFactor(0,0);
-        this.renderShadow.setAlpha(0.9);
-        
-        //* PLAYER *//
-        this.guy = new Player(this,
-            this.map.widthInPixels/2, this.map.heightInPixels/2, 
-            "ORB", "ORB-0.png",
-            this.SPEED, cursors);
-        this.guy.setScale(0.5)
-            .setSize(this.guy.width / 2, this.guy.height / 2)
-            .setOffset(this.guy.width / 4, this.guy.height / 2);
-
-        // create an emitter
-        my.vfx.sparkle = this.add.particles(0, 0, 'sparkle', {
-            speed: 25,
-            scale: { start: 0.1, end: 0 },
-            alpha: { start: 0.5, end: 0 },
-            // higher steps value = more time to go btwn min/max
-            lifespan: { min: 10, max: 4000, steps: 500 },
-            tint: [ 0x9ae4c4, 0xc5b1f2, 0xabdfd5, 0xffffff ],
-        })
-        my.vfx.sparkle.setPipeline('Light2D');
-
-        // note: setting the emitter's initial position to 0, 0 seems critical to get .startFollow to work
-        my.vfx.sparkle.startFollow(this.guy, 0, 0, false)
-
-        //* CAT SPRITES *//
         // GENERATE COORDS FOR CATS
         this.catCoords = [];
+
         // > start by choosing random rooms to spawn in
         let rm = [];
         while(rm.length < 6){ // 6 cats --> 6 rooms
@@ -162,6 +214,7 @@ class LEVEL_1 extends Phaser.Scene {
             if(rm.indexOf(tryIndex) === -1){ rm.push(tryIndex); }
         }
         for(let i = 0; i < 6; i++){ this.catCoords.push({x: -1, y: -1, room: this.dungeon.rooms[rm[i]] }); }
+
         // > choose random coords in the correct rooms to spawn cat at
         for(let room of this.dungeon.rooms){
             for(let cat of this.catCoords){
@@ -187,10 +240,11 @@ class LEVEL_1 extends Phaser.Scene {
                     this.SPEED, this.guy).setScale(2);
             i++;
         }
-        
-        
+    }
+
+/* COLLISION */
+    collisionHandler(){
         // make walls collidable 
-        //for(let i in walls){ this.groundLayer.setCollision(walls[i]); }
         for(let i in this.TILES.WALLS){ 
             for(let tileIndex of this.TILES.WALLS[i]){
                 this.groundLayer.setCollision(tileIndex); 
@@ -204,48 +258,39 @@ class LEVEL_1 extends Phaser.Scene {
                     //console.log("bang")
                 }
             );
-        
-        // cats collide with walls
+    }
 
-        // minimap tiles
+/* CAMERAS */
+    camz(){
+        /* MAIN */
+        let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
+        this.cameras.main.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
+            .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
+            .setOrigin(0).setViewport(0,0,viewSize,viewSize);
+        
+        /* MINIMAP */
+        // minimalistic representation of map for minimap
         this.miniMapLayer = this.map.createBlankLayer("minimap", this.dungeonTile);
+        this.miniRooms = this.add.graphics();
         for(let room of this.dungeon.rooms){
             this.miniMapLayer.fill(162,
                 room.x, room.y, 
                 room.width, room.height
             );
         }
-        
-        // light
-        this.lights.enable();
-        this.lights.setAmbientColor(0x151515);
-
-        this.spotlight = this.lights.addLight(this.guy.x, this.guy.y, 100).setIntensity(5);
-
-        // undiscovered rooms are invisible on minimap
+        // create a layer to hide undiscovered rooms from minimap camera
         this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
-
-        
-            
-        //* CAMERAS *//
-        let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
-        this.cameras.main.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
-            .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
-            .setOrigin(0).setViewport(0,0,viewSize,viewSize)
-            .ignore(this.miniMapLayer);
-
-        this.miniMapCamera = this.cameras.add(viewSize, 0, game.config.width - viewSize, game.config.width - viewSize)
+        this.miniMapCamera = this.cameras.add(viewSize + 25, 25, game.config.width - viewSize -50, game.config.width - viewSize -50)
             .startFollow(this.guy)//.stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
-            .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.15)
+            .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.075)
             .setDeadzone(this.WALLSIZE*this.TILESIZE,this.WALLSIZE*this.TILESIZE)
-            .ignore(this.groundLayer).ignore(this.renderShadow).ignore(this.guy);
-
-        /*******     DEBUG     *******/
-        // debug(drawDebug, showHTML, collisionToggle, shadowToggle)
-        this.debug(false, false, true, true);
-        /****************************/
+            .ignore(this.groundLayer).ignore(this.renderShadow.effect).ignore(this.guy);   
+        
+        // maoin cam ignores minimap stuff
+        this.cameras.main.ignore(this.miniMapLayer);
     }
 
+/* DEBUG HELP */
     debug(drawDebug, showHTML, collisionToggle, shadowToggle){
         this.physics.world.drawDebug = drawDebug;
 
@@ -275,118 +320,18 @@ class LEVEL_1 extends Phaser.Scene {
         }
     }
 
-    update() {
-        
+//* UPDATE() HELPERS -------------------------------------------------//
 
-        /* MAIN CAM MOVEMENT */
-        // find what room guy is in
-        for(let room of this.dungeon.rooms){
-            
-            // convert x y coords from pixels to tilesa
-            let x = this.guy.x / this.TILESIZE;
-            let y = this.guy.y / this.TILESIZE;
-            
-            if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
-                // this is the room guy is in!
-                this.cameras.main.setScroll(room.left * this.TILESIZE, room.top * this.TILESIZE);
-                room.discovered = true;
-                this.ACTIVEROOM = room.index;
-                this.invisLayer.forEachTile(
-                    t => (t.alpha = 0),
-                    this,
-                    room.x, room.y,
-                    room.width, room.height
-                )
-            } else{ 
-                room.active = false; 
-                if(room.discovered == true){
-                    this.invisLayer.forEachTile(
-                        t => (t.alpha = 0.7),
-                        this,
-                        room.x, room.y,
-                        room.width, room.height
-                    )
-                }
-            }
-        }
+/* MINIMAP ROOM VISIBILITY */
+setInvisAlpha(ALPHA, room){
+    // sets room visible on minimap by setting invisLayer alpha
+    // to ALPHA for every tile in the given room
+    this.invisLayer.forEachTile(
+        t => (t.alpha = ALPHA),
+        this,
+        room.x, room.y,
+        room.width, room.height
+    )
+}
 
-
-        /* spatial bg music logic (TEMP) */
-        let distance = this.distance;
-        distance.x = this.guy.x - this.target.x;
-        distance.y = this.guy.y - this.target.y;
-        distance.vect = Math.sqrt(Math.pow(distance.x, 2) + Math.pow(distance.y, 2));
-        this.bg_music.targetVolume = 1.1 - (distance.vect / distance.max);
-
-        // while not ending the scene, set volume based on distance
-        if(!this.endScene && this.bg_music.targetVolume > 0){ 
-            this.bg_music.setVolume(this.bg_music.targetVolume); 
-        }
-
-        if(this.startMusic == true){
-            this.fade(this.bg_music, this.bg_music.targetVolume, 0.05);
-        }
-        if(this.bg_music.volume >= this.bg_music.targetVolume){ this.startMusic = false; }
-            
-        if(this.stopMusic == true){
-            this.fade(this.bg_music, 0, 0.01);
-        }
-        
-        //// reset scene
-        //if (Phaser.Input.Keyboard.JustDown(this.enter)) {
-        //    this.endScene = true; this.nextScene = this;
-        //}
-        //// next scene
-        //if (Phaser.Input.Keyboard.JustDown(this.space)) {
-        //    this.endScene = true; this.nextScene = "Load";
-        //}
-        //this.exitScene(this.endScene, this.nextScene);
-
-        //for(let i in this.cat){
-        //    if(this.cat[i].discovered == true){ this.cat[i].update(i); }
-        //}
-        this.guy.update(this.spotlight);
-        for(let catID in this.cat){
-            this.cat[catID].update(catID, this.ACTIVEROOM, this.guy);
-        }
-
-        // erase shadow from around player
-        const cam = this.cameras.main;
-
-        //  Clear the RenderTexture
-        this.renderShadow.clear();
-
-        this.flicker--;
-        if(this.flicker < 0){
-            this.mask.setScale(Phaser.Math.FloatBetween(0.9,1.2));
-            this.flicker = Phaser.Math.FloatBetween(3,10);
-        }
-
-        if(this.shadowActive){
-            //  Fill it in black
-            this.renderShadow.fill(0x070707);
-
-            //  Erase the 'mask' texture from it based on the player position
-            this.renderShadow.erase(this.mask, this.guy.x - cam.scrollX, this.guy.y - cam.scrollY);
-            //this.renderShadow.erase(my.vfx.sparkle);
-            //console.log(my.vfx.sparkle)
-        }
-    }
-
-    fade(sound, target, rate){
-        let volume = sound.volume;
-        if(volume > target){ sound.volume -= rate; } 
-        else if(volume < target){ sound.volume += rate; } 
-    }
-
-    //exitScene(active, nextScene){
-    //    if(active){// fade out bg_music
-    //        this.stopMusic = true;
-    //        // restart this scene
-    //        if(this.bg_music.volume <= 0){ 
-    //            this.bg_music.stop();
-    //            this.scene.start(nextScene); 
-    //        }
-    //    }
-    //}
 }
