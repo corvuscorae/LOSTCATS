@@ -11,10 +11,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         scene.add.existing(this);
 
-        this.create();
+        this.create(scene);
     }
 
-    create(){
+    create(scene){
         this.anims.play("ORB-IDLE", true);
     }
 

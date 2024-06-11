@@ -6,6 +6,7 @@ class LEVEL_1 extends Phaser.Scene {
     preload(){ }
 
     init() {
+        this.flicker = 10;
         this.SPEED = 500; 
         this.TILESIZE = 32;
         this.WALLSIZE = 25;
@@ -79,7 +80,7 @@ class LEVEL_1 extends Phaser.Scene {
     create() {
         this.init();
 
-
+        this.mask = this.add.image(0,0,'mask').setOrigin(0.5);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
@@ -119,7 +120,14 @@ class LEVEL_1 extends Phaser.Scene {
             this.dungeonLayout, this.map, this.TILES,
             this.groundLayer, this.stuffLayer)
 
-        //for(let room of this.dungeon.rooms){        }
+
+        
+
+
+        this.renderShadow = this.add.renderTexture(0,0,this.scale.width,this.scale.height);
+        this.renderShadow.setOrigin(0,0);
+        this.renderShadow.setScrollFactor(0,0);
+        this.renderShadow.setAlpha(0.9);
         
         //* PLAYER *//
         this.guy = new Player(this,
@@ -129,6 +137,20 @@ class LEVEL_1 extends Phaser.Scene {
         this.guy.setScale(0.5)
             .setSize(this.guy.width / 2, this.guy.height / 2)
             .setOffset(this.guy.width / 4, this.guy.height / 2);
+
+        // create an emitter
+        my.vfx.sparkle = this.add.particles(0, 0, 'sparkle', {
+            speed: 25,
+            scale: { start: 0.1, end: 0 },
+            alpha: { start: 0.5, end: 0 },
+            // higher steps value = more time to go btwn min/max
+            lifespan: { min: 10, max: 4000, steps: 500 },
+            tint: [ 0x9ae4c4, 0xc5b1f2, 0xabdfd5, 0xffffff ],
+        })
+        my.vfx.sparkle.setPipeline('Light2D');
+
+        // note: setting the emitter's initial position to 0, 0 seems critical to get .startFollow to work
+        my.vfx.sparkle.startFollow(this.guy, 0, 0, false)
 
         //* CAT SPRITES *//
         // GENERATE COORDS FOR CATS
@@ -165,11 +187,6 @@ class LEVEL_1 extends Phaser.Scene {
                     this.SPEED, this.guy).setScale(2);
             i++;
         }
-
-        this.renderShadow = this.add.renderTexture(0,0,this.scale.width,this.scale.height);
-        this.renderShadow.setOrigin(0,0);
-        this.renderShadow.setScrollFactor(0,0);
-        console.log()
         
         
         // make walls collidable 
@@ -201,7 +218,7 @@ class LEVEL_1 extends Phaser.Scene {
         
         // light
         this.lights.enable();
-        this.lights.setAmbientColor(0x808080);
+        this.lights.setAmbientColor(0x151515);
 
         this.spotlight = this.lights.addLight(this.guy.x, this.guy.y, 100).setIntensity(5);
 
@@ -339,13 +356,20 @@ class LEVEL_1 extends Phaser.Scene {
         //  Clear the RenderTexture
         this.renderShadow.clear();
 
+        this.flicker--;
+        if(this.flicker < 0){
+            this.mask.setScale(Phaser.Math.FloatBetween(0.9,1.2));
+            this.flicker = Phaser.Math.FloatBetween(3,10);
+        }
+
         if(this.shadowActive){
             //  Fill it in black
-            this.renderShadow.fill(0x000000);
+            this.renderShadow.fill(0x070707);
 
             //  Erase the 'mask' texture from it based on the player position
-            //  'mask' is 300x300px, so subtract half of that (150x150) from guy x and y
-            this.renderShadow.erase('mask', (this.guy.x - 150) - cam.scrollX, (this.guy.y - 150) - cam.scrollY);
+            this.renderShadow.erase(this.mask, this.guy.x - cam.scrollX, this.guy.y - cam.scrollY);
+            //this.renderShadow.erase(my.vfx.sparkle);
+            //console.log(my.vfx.sparkle)
         }
     }
 

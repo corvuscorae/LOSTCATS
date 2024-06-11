@@ -12,6 +12,7 @@ class Load extends Phaser.Scene {
         this.load.setPath("./assets/player/");
         this.load.atlas("ORB", "ORB.png", "ORB.json");
 
+        this.load.image("sparkle", "particle.png");
         
         // cats
         this.load.setPath("./assets/cats/");
