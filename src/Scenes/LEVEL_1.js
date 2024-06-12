@@ -3,7 +3,58 @@ class LEVEL_1 extends Phaser.Scene {
         super("LEVEL_1");
     }
 
-    preload(){ }
+    /* VARIABLES + CURSORS */
+    init() {
+        this.flicker = 10;
+        this.SPEED = 3000; 
+        this.TILESIZE = 32;
+        this.WALLSIZE = 25;
+        this.DOORSIZE = 2;
+
+        this.ACTIVEROOM = -1;
+
+        this.EMPTYTILE = -1;
+        this.TILES = {
+            BG: [100],   
+            FLOORS: {
+                normal: [69,70,71,72,85,88,104,120],
+                broken: [86,87,101,102,103,117,118,119]
+            },
+            DOORS: {
+                left: [177,177],    // top,  bottom
+                right: [176, 176],  // top,  bottom
+                top: [126,127],     // left, right
+                bottom: [160,161]   // left, right
+            }, 
+            DOORWRAP: { // aka, the walls surrounding each door
+                left: [84, 54],     // top,  bottom
+                right: [82, 53],    // top,  bottom
+                top: [84,82],       // left, right
+                bottom: [54,53]     // left, right
+            },    
+            WALLS: {
+               left: [20],
+               right: [25],
+               top: [5,6,7,8],
+               bottom: [37,38,39,40],
+               corner: [4,9,36,41], // topleft, topright, bottomleft, bottomright
+               misc: [84,82,53,54]
+            },
+            LIGHT:{
+                candle: [164, 148, 149],
+                skull: [15, 16, 31, 32],
+                torch: [47, 79, 97, 111]
+            }
+        };
+
+        this.endScene = false;
+        this.shadowActive = true;
+
+        // set up Phaser-provided cursor key input
+        cursors = this.input.keyboard.createCursorKeys();
+        this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    }
 
     create() {
         //* VARIABLES, CURSORS *//
@@ -51,14 +102,15 @@ class LEVEL_1 extends Phaser.Scene {
         
         // light
         this.lights.enable();
-        this.spotlight = this.lights.addLight(0, 0, 150).setIntensity(2);    
+        this.lights.setAmbientColor(0x030303);
+        this.spotlight = this.lights.addLight(0, 0, 250).setIntensity(2);    
  
         //* CAMERAS *//
         this.camz();
 
         /*******     DEBUG     *******/
         // debug(drawDebug, showHTML, collisionToggle, shadowToggle)
-        this.debug(false, false, true, true);
+        this.debug(false, false, false, false);
         /****************************/
     }
 
@@ -90,7 +142,7 @@ class LEVEL_1 extends Phaser.Scene {
 
         /* update all cats */
         for(let catID in this.cat){
-            this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy);
+            this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy, this.space);
         }
 
         /* update renderShadow */
@@ -103,54 +155,6 @@ class LEVEL_1 extends Phaser.Scene {
 
 //* CREATE() HELPERS -------------------------------------------------//
 
-/* VARIABLES + CURSORS */
-    init() {
-        this.flicker = 10;
-        this.SPEED = 3000; 
-        this.TILESIZE = 32;
-        this.WALLSIZE = 25;
-        this.DOORSIZE = 2;
-
-        this.ACTIVEROOM = -1;
-
-        this.EMPTYTILE = -1;
-        this.TILES = {
-            BG: [100],   
-            FLOORS: {
-                normal: [69,70,71,72,85,88,104,120],
-                broken: [86,87,101,102,103,117,118,119]
-            },
-            DOORS: {
-                left: [177,177],    // top,  bottom
-                right: [176, 176],  // top,  bottom
-                top: [126,127],     // left, right
-                bottom: [160,161]   // left, right
-            }, 
-            DOORWRAP: { // aka, the walls surrounding each door
-                left: [84, 54],     // top,  bottom
-                right: [82, 53],    // top,  bottom
-                top: [84,82],       // left, right
-                bottom: [54,53]     // left, right
-            },    
-            WALLS: {
-               left: [20],
-               right: [25],
-               top: [5,6,7,8],
-               bottom: [37,38,39,40],
-               corner: [4,9,36,41], // topleft, topright, bottomleft, bottomright
-               misc: [84,82,53,54]
-            }
-        };
-
-        this.endScene = false;
-        this.shadowActive = true;
-
-        // set up Phaser-provided cursor key input
-        cursors = this.input.keyboard.createCursorKeys();
-        this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    }
-
 /* INIT UI */
     initUI(){
         /* HTML */
@@ -161,6 +165,7 @@ class LEVEL_1 extends Phaser.Scene {
 /* INIT MAP, LAYERS, DUNGEON */
     initEnvironment(){
         this.mask = this.add.image(0,0,'mask').setOrigin(0.5);
+        this.mask32px = this.add.image(0,0,'mask32px').setOrigin(0.5);
 
         // https://itnext.io/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd //
         this.dungeonLayout = new Dungeon({
@@ -193,11 +198,10 @@ class LEVEL_1 extends Phaser.Scene {
         this.BGLayer.fill(this.TILES.BG);        
 
         this.groundLayer = this.map.createBlankLayer("ground", this.dungeonTile).setPipeline('Light2D');
-        this.stuffLayer = this.map.createBlankLayer("stuff", this.dungeonTile).setPipeline('Light2D');
 
         this.dungeon = new DungeonWorld(this, 
             this.dungeonLayout, this.map, this.TILES,
-            this.groundLayer, this.stuffLayer)
+            this.groundLayer)
     }
 
 /* CATS */
@@ -237,8 +241,10 @@ class LEVEL_1 extends Phaser.Scene {
                 new Cat(this,
                     this.catCoords[i].x, this.catCoords[i].y, this.catCoords[i].room, 
                     "cats-sprites", catID,
-                    this.SPEED, this.guy).setScale(2);
+                    this.SPEED, this.guy
+                ).setScale(2);
             this.cat[catID].setSize(this.cat[catID].width * 2, this.cat[catID].height * 3.5);
+            this.cat[catID].setPipeline('Light2D');
             i++;
         }
     }
@@ -281,6 +287,8 @@ class LEVEL_1 extends Phaser.Scene {
                 }
             }
         }
+
+        this.dungeon.lightCollision(this, this.guy);
     }
 
 /* CAMERAS */
@@ -309,7 +317,7 @@ class LEVEL_1 extends Phaser.Scene {
             .setDeadzone(this.WALLSIZE*this.TILESIZE,this.WALLSIZE*this.TILESIZE)
             .ignore(this.groundLayer).ignore(this.renderShadow.effect).ignore(this.guy);   
         
-        // maoin cam ignores minimap stuff
+        // main cam ignores minimap stuff
         this.cameras.main.ignore(this.miniMapLayer);
     }
 

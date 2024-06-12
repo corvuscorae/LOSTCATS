@@ -1,13 +1,15 @@
 class DungeonWorld extends Phaser.Scene {
-    constructor(scene, dungeon, map, TILES, groundLayer, stuffLayer) {
+    constructor(scene, dungeon, map, TILES, groundLayer) {
         super(scene);
 
         this.rooms = dungeon.rooms;
+        this.candles = [];
+        this.skulls = [];
 
-        this.create(dungeon, map, TILES, groundLayer, stuffLayer);
+        this.create(scene, dungeon, map, TILES, groundLayer);
     }
 
-    create(dungeon, map, TILES, groundLayer, stuffLayer) {       
+    create(scene, dungeon, map, TILES, groundLayer) {       
         this.groundLayer = groundLayer;
 
         let i = 0;
@@ -17,8 +19,26 @@ class DungeonWorld extends Phaser.Scene {
            
             this.buildWalls(room, map, TILES);
             this.buildDoors(room, TILES, dungeon.doorSize);
-               // STUFF LAYER!!!!!!
+            if(room.index == 0){
+                this.buildSpawnRoom(room);
+            }
+            else{ this.buildLight(room); }
         } 
+
+        for(let candle of this.candles){
+            candle.sprite = scene.physics.add.sprite(
+                candle.x*scene.TILESIZE+scene.TILESIZE/2, 
+                candle.y*scene.TILESIZE+scene.TILESIZE/2, 
+                "dungeon-spritesheet", TILES.LIGHT.candle[0])
+            candle.sprite.setPipeline('Light2D');
+        }        
+        for(let skull of this.skulls){
+            skull.sprite = scene.physics.add.sprite(
+                skull.x*scene.TILESIZE+scene.TILESIZE/2, 
+                skull.y*scene.TILESIZE+scene.TILESIZE/2, 
+                "dungeon-spritesheet", TILES.LIGHT.skull[0])
+            skull.sprite.setPipeline('Light2D');
+        }
     }
 
     buildWalls(room, map, TILES){
@@ -170,6 +190,82 @@ class DungeonWorld extends Phaser.Scene {
          // door wrap
         this.groundLayer.putTileAt(wrapTiles[0], x1 - xShift, y1 - yShift);
         this.groundLayer.putTileAt(wrapTiles[1], x2 + xShift, y2 + yShift);       
+    }
+
+    buildSpawnRoom(room){
+       this.candles.push({x: room.centerX+2,    y: room.centerY,    sprite: null});
+       this.candles.push({x: room.centerX-2,    y: room.centerY,    sprite: null});
+       this.candles.push({x: room.centerX,      y: room.centerY+2,  sprite: null});
+       this.candles.push({x: room.centerX,      y: room.centerY-2,  sprite: null});
+       this.candles.push({x: room.centerX-4,    y: room.centerY+4,  sprite: null});
+       this.candles.push({x: room.centerX+4,    y: room.centerY+4,  sprite: null});
+       this.candles.push({x: room.centerX-4,    y: room.centerY-4,  sprite: null});
+       this.candles.push({x: room.centerX+4,    y: room.centerY-4,  sprite: null});
+    }   
+
+    buildLight(room){
+        const rand = Math.random();
+
+        if (rand <= 0.25) {
+            // 25% chance of three candles
+            // lhs of room
+            let x = Phaser.Math.Between(room.left + 2, room.centerX-1);
+            let y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+            this.candles.push({x: x, y: y, sprite: null});
+
+            // rhs of room
+            x = Phaser.Math.Between(room.centerX+1, room.right - 2);
+            y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+            this.candles.push({x: x, y: y, sprite: null});
+
+            // and uno mas
+            x = Phaser.Math.Between(room.left + 2, room.right - 2);
+            y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+            this.candles.push({x: x, y: y, sprite: null});
+        } else if (rand <= 0.5) {
+            // 50% chance of two candles
+            // lhs of room
+            let x = Phaser.Math.Between(room.left + 2, room.centerX-1);
+            let y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+            this.candles.push({x: x, y: y, sprite: null});
+
+
+            // rhs of room
+            x = Phaser.Math.Between(room.centerX+1, room.right - 2);
+            y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+            this.candles.push({x: x, y: y, sprite: null});
+
+        } else {
+            // 25% chance of skull light
+            this.skulls.push({x: room.centerX, y: room.centerY, sprite: null});
+        }
+    }
+
+    lightCollision(scene, player){ // must be called in scene!!
+        for(let candle of this.candles){
+            scene.physics.add.overlap(
+                candle.sprite, player,
+                (obj1, obj2) => {
+                    if(!obj1.anims.isPlaying){
+                        scene.lights.addLight(obj1.x, obj1.y, 240).setIntensity(0.75); 
+                        obj1.anims.play("candle-lit");
+                    }
+                    obj1.body.enabled = false; // only need collision until lit. turn off collision after
+                }
+            );
+        }        
+        for(let skull of this.skulls){
+            scene.physics.add.overlap(
+                skull.sprite, player,
+                (obj1, obj2) => {
+                    if(!obj1.anims.isPlaying){
+                        scene.lights.addLight(obj1.x, obj1.y, 400).setIntensity(1.5); 
+                        obj1.anims.play("skull-lit");
+                    }
+                    obj1.body.enabled = false; // only need collision until lit. turn off collision after
+                }
+            );
+        }
     }
 
     update() {

@@ -11,7 +11,7 @@ class Shadow extends Phaser.Scene {
         this.effect = scene.add.renderTexture(0,0,scene.scale.width,scene.scale.height);
         this.effect.setOrigin(0,0);
         this.effect.setScrollFactor(0,0);
-        this.effect.setAlpha(1);
+        this.effect.setAlpha(0.5);
     }
 
     update(scene, guy, mask, active) {
@@ -33,8 +33,6 @@ class Shadow extends Phaser.Scene {
 
             //  Erase the 'mask' texture from it based on the player position
             this.effect.erase(mask, guy.x - cam.scrollX, guy.y - cam.scrollY);
-            //this.renderShadow.erase(my.vfx.sparkle);
-            //console.log(my.vfx.sparkle)
         }
     }
 }

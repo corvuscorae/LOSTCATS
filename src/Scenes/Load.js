@@ -21,8 +21,13 @@ class Load extends Phaser.Scene {
         // environment tiles
         this.load.setPath("./assets/enviro/");
         this.load.image("dungeon", "dungeon-packed.png");    
+        this.load.spritesheet('dungeon-spritesheet', 'dungeon-packed.png', {
+            frameWidth: 32,
+            frameHeight: 32
+            });
         
         this.load.image('mask', 'mask.png');             
+        this.load.image('mask32px', 'mask_32px.png');             
        
         // audio
         this.load.setPath("./assets/audio/");
@@ -84,6 +89,25 @@ class Load extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: "candle-lit",
+            defaultTextureKey: "dungeon-spritesheet",
+            frames: [ 
+                {frame: 148}, 
+                {frame: 149} ],
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: "skull-lit",
+            defaultTextureKey: "dungeon-spritesheet",
+            frames: [ 
+                {frame: 30}, 
+                {frame: 31} ],
+            frameRate: 6,
+            repeat: -1
+        });
 
         /***** go to first level *****/
         this.scene.start("TITLE");

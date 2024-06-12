@@ -6,6 +6,9 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
 
         this.room = room; 
         this.speed = speed;
+        this.ID = ID;
+
+        this.goSit = false;
 
         this.following = false;
         this.meowing = {state: false, meowID: -1};
@@ -27,12 +30,12 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         scene.add.existing(this);
 
-        this.create(scene, speed, player);
+        this.create(scene, player);
 
     }
 
-    create(scene, speed, player){
-        console.log(this);
+    create(scene, player){
+        //console.log(this);
         // cat overlap
         scene.physics.add.overlap(
             this, player,
@@ -59,18 +62,73 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
             this.meow[i-1].targetVolume = 1;
             if(!this.meow[i-1].isPlaying) this.meow[i-1].play();
         }
+
+        //
+        scene.input.on('pointerdown', (pointer) => {
+            //console.log(`${pointer.x} ${pointer.y}`) 
+            //console.log(`${scene.cameras.main.scrollX} ${scene.cameras.main.scrollX}`) 
+            if(this.room.index == 0){ 
+                this.goSit = true;
+                this.following = false;
+                
+                let x = pointer.x + scene.cameras.main.scrollX;
+                let y = pointer.y + scene.cameras.main.scrollY;
+                console.log (x + " " + y)
+
+                scene.physics.moveTo(this,x, y, Phaser.Math.Between(50.2,50.5)
+                );
+
+                this.body.enabled = false;
+            }
+        })
     }
 
-    update(scene,ID, activeRoom, guy) {    // player passed from level
-        if(activeRoom === this.room.index){ 
+    update(scene,ID, activeRoom, guy, cursor) {    // player passed from level
+        if(activeRoom === this.room.index && !this.goSit){ 
+            if(!this.following){ this.anims.play(`${ID}-cat-IDLE`, true) }; 
             if(!this.overlapping && !this.following) this.playMeow(Phaser.Math.Between(0,this.meow.length-1));
         } else{ this.stopMeow(); }
 
-        
-        if(this.following == true){
-            this.room.index = activeRoom;
-            this.collisionCheck(guy);
+        // set this.room to room cat is currently in
+        for(let room of scene.dungeon.rooms){
+            let x = this.x / scene.TILESIZE; // converts x y coords from pixels to tiles
+            let y = this.y / scene.TILESIZE; //
             
+            if(room.left < x && room.right > x && room.top < y && room.bottom > y ){ 
+                /* this is the room cat is in! */
+                this.room = room;
+            }
+        }
+        
+        this.catMovement(scene,guy,ID);
+
+        this.catSitting(this.goSit);
+      
+        //* spatial meows */
+        this.target.x = this.x; this.target.y = this.y;
+        let distance = this.distance;
+        distance.x = guy.x - this.target.x;
+        distance.y = guy.y - this.target.y;
+        distance.vect = Math.sqrt(Math.pow(distance.x, 2) + Math.pow(distance.y, 2));
+        
+        this.targetVolume = 1.1 - (distance.vect / distance.max);
+        
+        for(let i in this.meow){
+            if(this.meow[i].isPlaying){
+                this.meow[i].setVolume(this.targetVolume);
+            }
+        }
+    }
+
+    catSitting(){
+        
+    }
+
+    catMovement(scene, guy, ID){
+        if(this.following == true){
+            this.collisionCheck(guy);
+            //console.log(`${this.ID}: ${this.room.index}`)
+
             if(this.overlapping == true){
                 scene.physics.moveTo(this, 
                     this.moveToward.x, this.moveToward.y, 
@@ -100,21 +158,6 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
                 this.anims.play(`${ID}-cat-IDLE`, true); 
             }
         }
-
-        //* spatial meows */
-        this.target.x = this.x; this.target.y = this.y;
-        let distance = this.distance;
-        distance.x = guy.x - this.target.x;
-        distance.y = guy.y - this.target.y;
-        distance.vect = Math.sqrt(Math.pow(distance.x, 2) + Math.pow(distance.y, 2));
-        
-        this.targetVolume = 1.1 - (distance.vect / distance.max);
-        
-        for(let i in this.meow){
-            if(this.meow[i].isPlaying){
-                this.meow[i].setVolume(this.targetVolume);
-            }
-        }
     }
 
     // custom collision
@@ -129,11 +172,7 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         this.overlapping = true;
         this.moveToward.x = Phaser.Math.FloatBetween(guy.x - 50, guy.x + 50);
         this.moveToward.y = Phaser.Math.FloatBetween(guy.y - 50, guy.y + 50);
-
-        console.log("meow")
     }
-
-    
 
     playMeow(i){
         if(this.meowing.state == false){
