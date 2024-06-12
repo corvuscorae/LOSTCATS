@@ -74,6 +74,19 @@ class Load extends Phaser.Scene {
                 frameRate: 15,
                 repeat: -1
             });
+            // laying
+            this.anims.create({
+                key: `${ID}-cat-LAYING`,
+                frames: this.anims.generateFrameNames('cats-sprites', {
+                    prefix: `${ID}-laying`,
+                    start: 0,
+                    end: 7,
+                    suffix: ".png",
+                    zeroPad: 0
+                }),
+                frameRate: 12,
+                repeat: 0
+            })
         }
 
         this.anims.create({

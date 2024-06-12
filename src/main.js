@@ -22,8 +22,8 @@ let config = {
     },
     width: 1000 ,
     height: 800 ,
-    backgroundColor: '1c1211',
-    scene: [Load, TITLE, CREDITS, LEVEL_1]
+    backgroundColor: '000',
+    scene: [Load, TITLE, CREDITS, LEVEL_1, WIN]
 }
 
 var cursors;
