@@ -5,6 +5,8 @@ class LEVEL_1 extends Phaser.Scene {
 
     /* VARIABLES + CURSORS */
     init() {
+        this.score = 0;
+        this.wait = 100;
         this.flicker = 10;
         this.SPEED = 3000; 
         this.TILESIZE = 32;
@@ -60,9 +62,6 @@ class LEVEL_1 extends Phaser.Scene {
         //* VARIABLES, CURSORS *//
         this.init();
 
-        //* UI *//
-        this.initUI();
-
         //* MAP, LAYERS, DUNGEON *//
         this.initEnvironment();
 
@@ -103,7 +102,7 @@ class LEVEL_1 extends Phaser.Scene {
         // light
         this.lights.enable();
         this.lights.setAmbientColor(0x030303);
-        this.spotlight = this.lights.addLight(0, 0, 250).setIntensity(2);    
+        this.spotlight = this.lights.addLight(0, 0, 175).setIntensity(2);    
  
         //* CAMERAS *//
         this.camz();
@@ -142,11 +141,20 @@ class LEVEL_1 extends Phaser.Scene {
 
         /* update all cats */
         for(let catID in this.cat){
-            this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy, this.space);
+            if(!this.cat[catID].isDown) this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy);
         }
 
         /* update renderShadow */
         this.renderShadow.update(this, this.guy, this.mask, this.shadowActive);
+
+        /* update ui */
+        document.getElementById('description').innerHTML = 
+        `<h1>LOST CATS: ${6 - this.score}</h1> > lead one cat at a time back to the initial room using your ARROW KEYS <br><br> > CLICK anywhere in initial room to let the cat rest <br>`;
+
+        if(this.score == 6){ 
+            this.wait--;
+            if(this.wait <= 0) this.scene.start("WIN"); 
+        }
     }
 
 ////////////////////////////////////////////////////////////////////////
@@ -154,13 +162,6 @@ class LEVEL_1 extends Phaser.Scene {
 ////////////////////////////////////////////////////////////////////////
 
 //* CREATE() HELPERS -------------------------------------------------//
-
-/* INIT UI */
-    initUI(){
-        /* HTML */
-        document.getElementById('description').innerHTML = 
-        "<h2>idk yet</h2><br>meep moop";
-    }
 
 /* INIT MAP, LAYERS, DUNGEON */
     initEnvironment(){
@@ -247,6 +248,9 @@ class LEVEL_1 extends Phaser.Scene {
             this.cat[catID].setPipeline('Light2D');
             i++;
         }
+
+        //this.cat["whiteblack"].x = this.guy.x;
+        //this.cat["whiteblack"].y = this.guy.y;
     }
 
 /* COLLISION */
@@ -294,10 +298,10 @@ class LEVEL_1 extends Phaser.Scene {
 /* CAMERAS */
     camz(){
         /* MAIN */
-        let viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
+        this.viewSize = this.WALLSIZE * this.TILESIZE; // viewport will be confined to the square rooms with a border on the side
         this.cameras.main.setBounds(0,0,this.map.widthInPixels, this.map.heightInPixels)
             .startFollow(this.guy).stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
-            .setOrigin(0).setViewport(0,0,viewSize,viewSize);
+            .setOrigin(0).setViewport(0,0,this.viewSize,this.viewSize);
         
         /* MINIMAP */
         // minimalistic representation of map for minimap
@@ -311,7 +315,7 @@ class LEVEL_1 extends Phaser.Scene {
         }
         // create a layer to hide undiscovered rooms from minimap camera
         this.invisLayer = this.map.createBlankLayer("invis", this.dungeonTile).fill(100);
-        this.miniMapCamera = this.cameras.add(viewSize + 25, 25, game.config.width - viewSize -50, game.config.width - viewSize -50)
+        this.miniMapCamera = this.cameras.add(this.viewSize + 25, 25, game.config.width - this.viewSize -50, game.config.width - this.viewSize -50)
             .startFollow(this.guy)//.stopFollow(this.guy) // ceneter cam on guy on scene load, stop follow
             .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels).setZoom(0.075)
             .setDeadzone(this.WALLSIZE*this.TILESIZE,this.WALLSIZE*this.TILESIZE)

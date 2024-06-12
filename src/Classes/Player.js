@@ -3,6 +3,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture, frame);
 
         this.speed = speed;
+        this.isLeading = false;
         scene.physics.add.existing(this);
         scene.add.existing(this);
 

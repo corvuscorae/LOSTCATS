@@ -1,6 +1,4 @@
 class Cat extends Phaser.Physics.Arcade.Sprite {
-    // TODO: FIX MEOW BUG
-    //  should stop meowing when discovered but start meowing if lost (stopped following guy)
     constructor(scene, x, y, room, texture, ID, speed, player) {
         super(scene, x, y, texture);
 
@@ -13,7 +11,8 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         this.following = false;
         this.meowing = {state: false, meowID: -1};
 
-        this.relativePosition = { x: 0, y: 0}
+        this.laydownHelper = 1;
+
         this.collisionOffset = {x: 200, y: 200};
         this.overlapping = false;
         this.moveToward = { x: 0, y: 0 }
@@ -41,9 +40,12 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
             this, player,
             (obj1, obj2) => {
                 // follow player while overlap
-                obj1.setSize(this.width/3, this.height/2)
-                    .setOffset(this.width/3, this.height/2);
-                this.following = true;
+                if(!obj2.isLeading){
+                    obj1.setSize(this.width/3, this.height/2)
+                        .setOffset(this.width/3, this.height/2);
+                    obj2.isLeading = true;
+                    this.following = true;
+                }
             }
         );
 
@@ -67,23 +69,28 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         scene.input.on('pointerdown', (pointer) => {
             //console.log(`${pointer.x} ${pointer.y}`) 
             //console.log(`${scene.cameras.main.scrollX} ${scene.cameras.main.scrollX}`) 
-            if(this.room.index == 0){ 
+            if(this.room.index == 0 && this.laydownHelper > 0){ 
                 this.goSit = true;
                 this.following = false;
                 
-                let x = pointer.x + scene.cameras.main.scrollX;
-                let y = pointer.y + scene.cameras.main.scrollY;
-                console.log (x + " " + y)
+                this.restAt = { 
+                    x: pointer.x + scene.cameras.main.scrollX,
+                    y: pointer.y + scene.cameras.main.scrollY };
 
-                scene.physics.moveTo(this,x, y, Phaser.Math.Between(50.2,50.5)
-                );
+                scene.physics.moveTo(this, this.restAt.x, this.restAt.y, Phaser.Math.Between(50.2,50.5));
 
-                this.body.enabled = false;
+                if(this.x > this.restAt.x){ 
+                    this.setFlip(true); 
+                }
+                else {//if(this.x < guy.x){ 
+                    this.resetFlip(); 
+                }
+
             }
         })
     }
 
-    update(scene,ID, activeRoom, guy, cursor) {    // player passed from level
+    update(scene,ID, activeRoom, guy) {    // player passed from level
         if(activeRoom === this.room.index && !this.goSit){ 
             if(!this.following){ this.anims.play(`${ID}-cat-IDLE`, true) }; 
             if(!this.overlapping && !this.following) this.playMeow(Phaser.Math.Between(0,this.meow.length-1));
@@ -99,10 +106,10 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
                 this.room = room;
             }
         }
-        
-        this.catMovement(scene,guy,ID);
 
-        this.catSitting(this.goSit);
+        // cat movement (move toward pointer or toward player)
+        if(this.restAt){ this.catSitting(scene, guy, ID); } // pointer
+        else { this.catMovement(scene, guy, ID); }          // player
       
         //* spatial meows */
         this.target.x = this.x; this.target.y = this.y;
@@ -120,8 +127,27 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    catSitting(){
-        
+    catSitting(scene, guy, ID){
+        let distance = Phaser.Math.Distance.BetweenPoints(this, this.restAt);
+
+        if (distance < 3){
+            this.body.reset(this.restAt.x, this.restAt.y);
+        }
+
+        if(this.body.speed > 0){
+            this.anims.play(`${ID}-cat-WALK`, true); 
+        }
+        else{
+            if(this.laydownHelper > 0){
+                this.anims.play(`${ID}-cat-LAYING`, true); 
+                this.isDown = 1;
+                scene.score++;
+                this.laydownHelper--;
+                guy.isLeading = false;
+            }
+        }
+
+        this.body.enabled = false;
     }
 
     catMovement(scene, guy, ID){
@@ -134,18 +160,18 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
                     this.moveToward.x, this.moveToward.y, 
                     guy.body.speed/Phaser.Math.Between(1.2,1.5)
                 );
-
+                guy.isLeading = true;
                 this.overlapping = false;
             }
             else{ 
                 this.body.setVelocity(0);
+                guy.isLeading = false;
                 this.following = false;
             }
                 
 
             if(this.x > guy.x){ 
                 this.setFlip(true); 
-                this.relativePosition.x = -1;
             }
             else {//if(this.x < guy.x){ 
                 this.resetFlip(); 
@@ -158,6 +184,8 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
                 this.anims.play(`${ID}-cat-IDLE`, true); 
             }
         }
+        
+
     }
 
     // custom collision
