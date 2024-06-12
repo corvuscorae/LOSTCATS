@@ -25,6 +25,19 @@ class DungeonWorld extends Phaser.Scene {
             else{ this.buildLight(room); }
         } 
 
+        this.lightSounds = [];
+        for(let i = 0; i < 5; i++){ // 4 sfx
+            this.lightSounds.push(
+                scene.sound.add(`ff${i}`, {
+                    volume: 0.5,
+                    rate: 1,
+                    detune: 0,
+                    loop: false
+                })
+            );
+        }
+        console.log(this.lightSounds)
+
         for(let candle of this.candles){
             candle.sprite = scene.physics.add.sprite(
                 candle.x*scene.TILESIZE+scene.TILESIZE/2, 
@@ -247,9 +260,13 @@ class DungeonWorld extends Phaser.Scene {
                 candle.sprite, player,
                 (obj1, obj2) => {
                     if(!obj1.anims.isPlaying){
+                        let i = Phaser.Math.Between(0,4);
+                        this.lightSounds[i].setDetune(0);
+                        this.lightSounds[i].play();
                         scene.lights.addLight(obj1.x, obj1.y, 240).setIntensity(0.75); 
                         obj1.anims.play("candle-lit");
                     }
+                    
                     obj1.body.enabled = false; // only need collision until lit. turn off collision after
                 }
             );
@@ -259,6 +276,9 @@ class DungeonWorld extends Phaser.Scene {
                 skull.sprite, player,
                 (obj1, obj2) => {
                     if(!obj1.anims.isPlaying){
+                        this.lightSounds[1].setDetune(-1000);
+                        this.lightSounds[1].play();
+                        
                         scene.lights.addLight(obj1.x, obj1.y, 400).setIntensity(1.5); 
                         obj1.anims.play("skull-lit");
                     }

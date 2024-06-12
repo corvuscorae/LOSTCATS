@@ -1,10 +1,11 @@
 class Cat extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, room, texture, ID, speed, player) {
+    constructor(scene, x, y, room, texture, ID, index, speed, player) {
         super(scene, x, y, texture);
 
         this.room = room; 
         this.speed = speed;
         this.ID = ID;
+        this.index = index;
 
         this.goSit = false;
 
@@ -43,8 +44,10 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
                 if(!obj2.isLeading){
                     obj1.setSize(this.width/3, this.height/2)
                         .setOffset(this.width/3, this.height/2);
-                    obj2.isLeading = true;
-                    this.following = true;
+                    if(this.laydownHelper > 0) {
+                        obj2.isLeading = true;
+                        this.following = true;
+                    }
                 }
             }
         );
@@ -55,21 +58,30 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         for(let i = 1; i <= 3; i++){
             this.meow.push(
                 scene.sound.add(`meow-${i}`, {
-                volume: 0,
-                rate: 1,
-                detune: 0,
-                loop: false
+                    volume: 0,
+                    rate: 1,
+                    detune: 0,
+                    loop: false
                 })
             );
             this.meow[i-1].targetVolume = 1;
             if(!this.meow[i-1].isPlaying) this.meow[i-1].play();
         }
 
+        this.purr = 
+            scene.sound.add(`purr-${this.index+1}`, {
+                volume: 0,
+                rate: 1,
+                detune: 0,
+                loop: true
+            });
+
         //
         scene.input.on('pointerdown', (pointer) => {
             //console.log(`${pointer.x} ${pointer.y}`) 
             //console.log(`${scene.cameras.main.scrollX} ${scene.cameras.main.scrollX}`) 
             if(this.room.index == 0 && this.laydownHelper > 0){ 
+                if(!this.purr.isPlaying) this.purr.play();
                 this.goSit = true;
                 this.following = false;
                 
@@ -94,7 +106,9 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
         if(activeRoom === this.room.index && !this.goSit){ 
             if(!this.following){ this.anims.play(`${ID}-cat-IDLE`, true) }; 
             if(!this.overlapping && !this.following) this.playMeow(Phaser.Math.Between(0,this.meow.length-1));
-        } else{ this.stopMeow(); }
+        } else{ 
+            this.stopMeow(); 
+        }
 
         // set this.room to room cat is currently in
         for(let room of scene.dungeon.rooms){
@@ -124,6 +138,10 @@ class Cat extends Phaser.Physics.Arcade.Sprite {
             if(this.meow[i].isPlaying){
                 this.meow[i].setVolume(this.targetVolume);
             }
+        }
+        if(this.purr.isPlaying){    
+            if(activeRoom != this.room.index) this.purr.setVolume(0);
+            else this.purr.setVolume(this.targetVolume - 0.2);
         }
     }
 

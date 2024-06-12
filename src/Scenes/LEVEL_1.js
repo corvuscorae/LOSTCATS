@@ -5,7 +5,7 @@ class LEVEL_1 extends Phaser.Scene {
 
     /* VARIABLES + CURSORS */
     init() {
-        this.score = 0;
+        this.score = 4;
         this.wait = 100;
         this.flicker = 10;
         this.SPEED = 3000; 
@@ -141,7 +141,7 @@ class LEVEL_1 extends Phaser.Scene {
 
         /* update all cats */
         for(let catID in this.cat){
-            if(!this.cat[catID].isDown) this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy);
+            this.cat[catID].update(this, catID, this.ACTIVEROOM, this.guy);
         }
 
         /* update renderShadow */
@@ -153,7 +153,17 @@ class LEVEL_1 extends Phaser.Scene {
 
         if(this.score == 6){ 
             this.wait--;
-            if(this.wait <= 0) this.scene.start("WIN"); 
+            this.guy.sound.setVolume(this.wait/100 - 0.2);
+            for(let catID in this.cat){
+                this.cat[catID].purr.setVolume(this.wait/100);
+            }
+            if(this.wait <= 0){
+                this.guy.sound.stop();
+                for(let catID in this.cat){
+                    this.cat[catID].purr.stop();
+                }
+                this.scene.start("WIN");
+            }  
         }
     }
 
@@ -241,16 +251,13 @@ class LEVEL_1 extends Phaser.Scene {
             this.cat[catID] = 
                 new Cat(this,
                     this.catCoords[i].x, this.catCoords[i].y, this.catCoords[i].room, 
-                    "cats-sprites", catID,
+                    "cats-sprites", catID, i,
                     this.SPEED, this.guy
                 ).setScale(2);
             this.cat[catID].setSize(this.cat[catID].width * 2, this.cat[catID].height * 3.5);
             this.cat[catID].setPipeline('Light2D');
             i++;
         }
-
-        //this.cat["whiteblack"].x = this.guy.x;
-        //this.cat["whiteblack"].y = this.guy.y;
     }
 
 /* COLLISION */

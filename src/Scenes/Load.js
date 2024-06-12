@@ -31,16 +31,26 @@ class Load extends Phaser.Scene {
        
         // audio
         this.load.setPath("./assets/audio/");
-        this.load.audio("bg_music", "meepmoop_mixdown.ogg");     
+        this.load.audio("bg_music", "heavenly-energy-188908.mp3");
+
+        // misc sfx
+        this.load.audio("ff0", "forceField_000.ogg");
+        this.load.audio("ff1", "forceField_001.ogg");
+        this.load.audio("ff2", "forceField_002.ogg");
+        this.load.audio("ff3", "forceField_003.ogg");
+        this.load.audio("ff4", "forceField_004.ogg");
 
         // cat audio
         this.load.audio("meow-1", "cat-98721.ogg");     
         this.load.audio("meow-2", "cat-crying-81035.ogg");     
-        this.load.audio("meow-3", "cat-meow-14536.ogg");     
-        this.load.audio("purr", "purring-cat-156459.ogg");     
+        this.load.audio("meow-3", "cat-meow-14536.ogg");    
 
-
-        
+        this.load.audio("purr-1", "cat-is-purring-27823.mp3");     
+        this.load.audio("purr-2", "cat-purr-33835.mp3");     
+        this.load.audio("purr-3", "purring_cat_01-68456.mp3");     
+        this.load.audio("purr-4", "purring_cat_02-29526.mp3");     
+        this.load.audio("purr-5", "purring-cat_01-63402.mp3");     
+        this.load.audio("purr-6", "purring-happy-cat-29114.mp3");     
 
     }
 

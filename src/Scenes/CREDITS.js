@@ -19,7 +19,9 @@ class CREDITS extends Phaser.Scene {
         this.add.bitmapText(30, 190, "pixel_font", 
             'font: Public Pixel Font by GGBotNet (fontspace.com)', 18).setOrigin(0);
         this.add.bitmapText(30, 230, "pixel_font", 
-            'meows: various (pixabay.com)', 18).setOrigin(0);
+            'cat sounds: various (pixabay.com)', 18).setOrigin(0);
+        this.add.bitmapText(30, 270, "pixel_font", 
+            'bg music: Heavenly Energy by Light_Music (pixabay.com)', 18).setOrigin(0);
 
         this.add.bitmapText(game.config.width / 2, game.config.height - 100, "pixel_font", 
             'programming: raven ruiz (yours truly)', 18).setOrigin(0.5);
