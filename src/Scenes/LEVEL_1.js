@@ -5,7 +5,7 @@ class LEVEL_1 extends Phaser.Scene {
 
     /* VARIABLES + CURSORS */
     init() {
-        this.score = 4;
+        this.score = 0;
         this.wait = 100;
         this.flicker = 10;
         this.SPEED = 3000; 

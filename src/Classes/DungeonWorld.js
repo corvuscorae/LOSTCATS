@@ -36,7 +36,6 @@ class DungeonWorld extends Phaser.Scene {
                 })
             );
         }
-        console.log(this.lightSounds)
 
         for(let candle of this.candles){
             candle.sprite = scene.physics.add.sprite(

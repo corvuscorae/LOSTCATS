@@ -7,7 +7,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.isLeading = false;
         scene.physics.add.existing(this);
         scene.add.existing(this);
-        console.log(this)
         this.create(scene);        
         
         this.body.maxSpeed = speed/2;
